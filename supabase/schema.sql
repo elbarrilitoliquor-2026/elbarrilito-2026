@@ -1,0 +1,202 @@
+-- ============================================================
+-- El Barrilito Liquor Store — Supabase Schema
+-- Run this whole file once in: Supabase Dashboard → SQL Editor → New query
+-- ============================================================
+
+-- Needed for gen_random_uuid()
+create extension if not exists pgcrypto;
+
+-- ------------------------------------------------------------
+-- 1. PRODUCTS  (catalogue shown on the client page)
+-- ------------------------------------------------------------
+create table if not exists public.products (
+  id            uuid primary key default gen_random_uuid(),
+  name          text not null,
+  category      text not null default 'Spirits',     -- Tequila, Mezcal, Whiskey, Wine, Beer, etc.
+  size          text not null default '1 bottle (750 ml)',
+  description   text not null default '',
+  price         numeric(10,2) not null,
+  old_price     numeric(10,2),                        -- optional strike-through price
+  image_url     text,                                 -- public URL (Supabase Storage or external)
+  badge         text,                                 -- e.g. "Bestseller" (nullable)
+  rating        numeric(2,1) not null default 4.8,
+  rating_count  integer not null default 0,
+  is_active     boolean not null default true,        -- controls visibility on client site
+  sort_order    integer not null default 0,           -- manual ordering in the slider
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now()
+);
+
+create index if not exists products_active_sort_idx
+  on public.products (is_active, sort_order);
+
+-- ------------------------------------------------------------
+-- 2. REVIEWS  (client-submitted, admin-moderated)
+-- ------------------------------------------------------------
+create table if not exists public.reviews (
+  id            uuid primary key default gen_random_uuid(),
+  customer_name text not null,
+  location      text,                                 -- e.g. "Pasadena, TX" (optional)
+  rating        integer not null check (rating between 1 and 5),
+  review_text   text not null,
+  status        text not null default 'pending'       -- pending | approved | rejected
+                  check (status in ('pending','approved','rejected')),
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now()
+);
+
+create index if not exists reviews_status_idx on public.reviews (status, created_at desc);
+
+-- ------------------------------------------------------------
+-- 3. WHATSAPP CLICKS  (lead tracking — every redirect to WhatsApp)
+-- ------------------------------------------------------------
+create table if not exists public.whatsapp_clicks (
+  id            uuid primary key default gen_random_uuid(),
+  source        text not null,                        -- 'product' | 'cart_checkout' | 'enquiry_form' | 'contact_form' | 'floating_button' | 'chatbot'
+  product_name  text,                                  -- populated when source = 'product' or 'cart_checkout'
+  customer_name text,                                   -- populated when source = 'cart_checkout', 'enquiry_form', or 'contact_form'
+  customer_phone text,
+  message       text,                                  -- the actual WhatsApp message text sent
+  page_url      text,
+  created_at    timestamptz not null default now()
+);
+
+create index if not exists whatsapp_clicks_created_idx on public.whatsapp_clicks (created_at desc);
+create index if not exists whatsapp_clicks_source_idx on public.whatsapp_clicks (source);
+
+-- ------------------------------------------------------------
+-- 4. updated_at auto-touch trigger (products & reviews)
+-- ------------------------------------------------------------
+create or replace function public.set_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists trg_products_updated_at on public.products;
+create trigger trg_products_updated_at
+  before update on public.products
+  for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_reviews_updated_at on public.reviews;
+create trigger trg_reviews_updated_at
+  before update on public.reviews
+  for each row execute function public.set_updated_at();
+
+-- ------------------------------------------------------------
+-- 5. ROW LEVEL SECURITY
+--    Public (anon) visitors: read active products, read approved reviews,
+--    insert new reviews (pending only), insert whatsapp_clicks.
+--    Admins (authenticated users): full read/write on everything.
+-- ------------------------------------------------------------
+alter table public.products enable row level security;
+alter table public.reviews enable row level security;
+alter table public.whatsapp_clicks enable row level security;
+
+-- PRODUCTS
+drop policy if exists "public read active products" on public.products;
+create policy "public read active products"
+  on public.products for select
+  to anon
+  using (is_active = true);
+
+drop policy if exists "admin full access products" on public.products;
+create policy "admin full access products"
+  on public.products for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- REVIEWS
+drop policy if exists "public read approved reviews" on public.reviews;
+create policy "public read approved reviews"
+  on public.reviews for select
+  to anon
+  using (status = 'approved');
+
+drop policy if exists "public submit review" on public.reviews;
+create policy "public submit review"
+  on public.reviews for insert
+  to anon
+  with check (status = 'pending');
+
+drop policy if exists "admin full access reviews" on public.reviews;
+create policy "admin full access reviews"
+  on public.reviews for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- WHATSAPP CLICKS
+drop policy if exists "public insert whatsapp click" on public.whatsapp_clicks;
+create policy "public insert whatsapp click"
+  on public.whatsapp_clicks for insert
+  to anon
+  with check (true);
+
+drop policy if exists "admin read whatsapp clicks" on public.whatsapp_clicks;
+create policy "admin read whatsapp clicks"
+  on public.whatsapp_clicks for select
+  to authenticated
+  using (true);
+
+drop policy if exists "admin manage whatsapp clicks" on public.whatsapp_clicks;
+create policy "admin manage whatsapp clicks"
+  on public.whatsapp_clicks for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- ------------------------------------------------------------
+-- 6. SEED DATA — the 5 products currently hardcoded on the site
+-- ------------------------------------------------------------
+insert into public.products (name, category, size, description, price, old_price, image_url, badge, rating, rating_count, sort_order)
+values
+  ('Tequila Añejo', 'Tequila', '1 bottle (750 ml)',
+   'Aged over a year in oak barrels for a smooth, rounded character with warm notes of vanilla, caramel and toasted oak. A refined sipping tequila best enjoyed neat or on the rocks.',
+   45.99, 52.99, 'assets/images/wine_product.png', 'Bestseller', 4.8, 41900, 1),
+
+  ('Mezcal Artesanal', 'Mezcal', '1 bottle (750 ml)',
+   'Handcrafted in small batches using traditional methods, this mezcal delivers a bold, smoky character with earthy agave depth. A favorite among those who love authentic, artisanal spirits.',
+   44.99, 52.99, 'assets/images/bourbon_product.png', null, 4.7, 15800, 2),
+
+  ('Kentucky Bourbon', 'Whiskey', '1 bottle (750 ml)',
+   'A single barrel Kentucky straight bourbon with rich caramel, oak and a gentle hint of spice on the finish. Smooth enough to sip neat, bold enough to anchor your favorite cocktail.',
+   38.99, 45.00, 'assets/images/whiskey_product.png', null, 4.9, 32400, 3),
+
+  ('Tequila Reposado', 'Tequila', '1 bottle (750 ml)',
+   'Rested in oak for a mellow, golden character that balances sweet agave with subtle wood notes. A versatile bottle equally at home in a margarita or sipped slowly.',
+   32.99, 39.99, 'assets/images/limited_edition.png', null, 4.8, 20500, 4),
+
+  ('Craft Beer Pack', 'Beer', '1 pack (6 x 355 ml)',
+   'A hand-picked six-pack of Mexican and craft beer favorites, served ice-cold and ready for any occasion — game day, a backyard cookout, or just unwinding after a long week.',
+   18.99, 22.00, 'assets/images/craft_beer.png', null, 4.6, 12100, 5)
+on conflict do nothing;
+
+-- ------------------------------------------------------------
+-- 7. SEED DATA — the 3 testimonials currently hardcoded on the site
+--    (inserted as already-approved so they keep showing immediately)
+-- ------------------------------------------------------------
+insert into public.reviews (customer_name, location, rating, review_text, status)
+values
+  ('Maria Garcia', 'Local Customer · Pasadena, TX', 5,
+   'Best liquor store in Pasadena, hands down! The tequila selection is incredible — they carry brands I can''t find anywhere else in Houston. The staff is super friendly and always helps me pick the perfect bottle. ¡Los recomiendo!',
+   'approved'),
+
+  ('Carlos Rodriguez', 'Regular Customer · South Houston', 5,
+   'I''ve been coming to El Barrilito for years. Their prices are always fair and they have an amazing selection of mezcals and craft beers. The bilingual service makes everyone feel welcome. This is my go-to spot!',
+   'approved'),
+
+  ('James Thompson', 'Spirits Enthusiast · Deer Park', 5,
+   'Stopped by looking for a specific añejo tequila and the staff knew exactly what I needed. Great atmosphere, clean store, and the selection rivals shops twice its size. A real gem on Shaver Street!',
+   'approved')
+on conflict do nothing;
+
+-- ============================================================
+-- DONE. Next steps:
+-- 1. Project Settings → API → copy "Project URL" and "anon public" key
+-- 2. Paste them into ELBarrilito/js/supabase-config.js
+-- 3. Authentication → Add user (email + password) to create your admin login
+-- ============================================================

@@ -1,0 +1,77 @@
+import { useAuth } from '../context/AuthContext';
+
+const NAV_ITEMS = [
+  {
+    view: 'dashboard',
+    label: 'Dashboard',
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="3" width="7" height="9" />
+        <rect x="14" y="3" width="7" height="5" />
+        <rect x="14" y="12" width="7" height="9" />
+        <rect x="3" y="16" width="7" height="5" />
+      </svg>
+    ),
+  },
+  {
+    view: 'catalogue',
+    label: 'Catalogue',
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M20.59 13.41 11 3.83a2 2 0 0 0-1.42-.58H4a1 1 0 0 0-1 1v5.58a2 2 0 0 0 .58 1.42l9.58 9.59a2 2 0 0 0 2.82 0l4.61-4.61a2 2 0 0 0 0-2.82Z" />
+        <circle cx="7.5" cy="7.5" r="1" />
+      </svg>
+    ),
+  },
+  {
+    view: 'leads',
+    label: 'WhatsApp Leads',
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+      </svg>
+    ),
+  },
+  {
+    view: 'reviews',
+    label: 'Reviews',
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      </svg>
+    ),
+  },
+];
+
+export default function Sidebar({ activeView, onNavigate }) {
+  const { signOut } = useAuth();
+
+  return (
+    <aside className="admin-sidebar">
+      <div className="sidebar-brand">
+        <img src="/assets/images/eb-barrel-logo.svg" alt="" className="sidebar-logo" />
+        <span>El Barrilito<br /><small>Admin Panel</small></span>
+      </div>
+      <nav className="sidebar-nav">
+        {NAV_ITEMS.map((item) => (
+          <button
+            key={item.view}
+            className={`sidebar-link${activeView === item.view ? ' active' : ''}`}
+            onClick={() => onNavigate(item.view)}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
+      <button id="logout-btn" className="sidebar-logout" onClick={signOut}>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+        Sign Out
+      </button>
+    </aside>
+  );
+}

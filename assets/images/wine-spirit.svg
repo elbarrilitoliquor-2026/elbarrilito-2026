@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 600">
+  <defs>
+    <style>
+      .stroke { fill: none; stroke: #2a1110; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .fill-white { fill: #ffffff; stroke: #2a1110; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .fill-dark { fill: #2a1110; stroke: #2a1110; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .fill-red { fill: #9e2329; stroke: #2a1110; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <!-- Ground Wavy Line -->
+  <path d="M 100,480 Q 150,420 200,490 T 290,480 T 360,400" class="stroke" />
+
+  <!-- Back Leg (Dark) - Bent -->
+  <polygon points="250,290 320,350 280,360 210,310" class="fill-dark" />
+  <polygon points="290,345 325,350 310,420 280,410" class="fill-dark" />
+  
+  <!-- Back Shoe -->
+  <polygon points="280,410 310,420 290,460" class="fill-white" />
+  <line x1="290" y1="460" x2="305" y2="435" class="stroke" />
+
+  <!-- Front Leg (Dark) - Straight -->
+  <polygon points="150,440 200,450 290,300 230,290" class="fill-dark" />
+  
+  <!-- Front Shoe -->
+  <polygon points="150,440 200,450 110,480" class="fill-white" />
+  <line x1="110" y1="480" x2="135" y2="465" class="stroke" />
+
+  <!-- BOTTLE -->
+  <!-- Red Cap -->
+  <rect x="35" y="235" width="15" height="40" rx="3" class="fill-red" />
+  <!-- Red Neck -->
+  <rect x="50" y="240" width="30" height="30" class="fill-red" />
+  <!-- Main Bottle Body (White) -->
+  <rect x="80" y="220" width="260" height="75" rx="20" class="fill-white" />
+  <!-- Red Label on bottom half of bottle -->
+  <path d="M 210,260 L 338,260 A 20 20 0 0 1 340 275 L 340,295 L 210,295 Z" class="fill-red" />
+
+  <!-- Back Arm (Holding bottle bottom) -->
+  <path d="M 290,270 L 330,300 L 310,310 Z" class="fill-white" />
+
+  <!-- BODY / SHIRT (White Polygon) -->
+  <polygon points="180,195 290,195 350,270 250,310 180,260" class="fill-white" />
+
+  <!-- Front Arm (Holding bottle neck) -->
+  <!-- Sleeve overlapping bottle -->
+  <polygon points="180,195 120,250 150,265" class="fill-white" />
+  <!-- Floating abstract triangle cuff/hand below neck -->
+  <polygon points="90,285 130,335 160,285" class="fill-white" />
+
+  <!-- HEAD -->
+  <!-- Head circle -->
+  <circle cx="210" cy="155" r="18" class="fill-white" />
+  <!-- Hair Blob (Dark) -->
+  <path d="M 210,137 C 230,125 240,145 235,165 C 230,175 215,180 210,173 Z" class="fill-dark" />
+  <!-- Hair bun -->
+  <circle cx="205" cy="133" r="8" class="fill-dark" />
+  <!-- Eye -->
+  <line x1="192" y1="155" x2="202" y2="155" class="stroke" />
+  <circle cx="192" cy="155" r="1" fill="#2a1110" />
+  <!-- Nose bridge -->
+  <path d="M 195,150 L 188,157 L 195,163" class="stroke" />
+
+  <!-- WINE GLASS (Floating top left) -->
+  <!-- Bowl top opening -->
+  <ellipse cx="110" cy="115" rx="35" ry="8" class="fill-white" />
+  <!-- Bowl bottom half (Red liquid) -->
+  <path d="M 75,115 A 35 32 0 0 0 145 115 Z" class="fill-red" />
+  <path d="M 75,115 A 35 35 0 0 0 145 115 Z" class="stroke" />
+  <path d="M 75,115 A 35 8 0 0 0 145 115 Z" class="stroke" />
+  <!-- Stem -->
+  <line x1="110" y1="150" x2="110" y2="200" class="stroke" />
+  <!-- Base -->
+  <path d="M 85,200 Q 110,220 135,200 Z" class="fill-white" />
+  
+  <!-- STAR (Top right) -->
+  <polygon points="350,80 355,115 390,110 360,130 350,165 330,135 295,130 330,115" class="fill-white" />
+</svg>
