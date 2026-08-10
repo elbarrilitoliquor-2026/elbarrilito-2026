@@ -186,6 +186,22 @@ input, textarea, select { font-family: inherit; }
   padding: 20px 22px;
   box-shadow: var(--shadow);
 }
+.stat-card.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.stat-card.clickable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(168, 0, 0, 0.12);
+  border-color: var(--red);
+}
+.stat-card-hint {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-top: 6px;
+  font-weight: 500;
+}
 .stat-label { display: block; font-size: 0.76rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
 .stat-value { display: block; font-size: 1.9rem; font-weight: 700; color: var(--red); }
 
@@ -365,6 +381,53 @@ input, textarea, select { font-family: inherit; }
 .form-status.success { color: var(--green-ok); }
 .form-status.error { color: var(--burgundy); }
 
+/* ===== SETTINGS VIEW ===== */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.settings-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: 26px 28px;
+  box-shadow: var(--shadow);
+}
+.settings-card h2 {
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 10px;
+}
+.field-group {
+  margin-bottom: 16px;
+}
+.field-help {
+  font-size: 0.74rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+.preview-box {
+  background: var(--ivory);
+  border: 1px dashed var(--red-soft);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-top: 14px;
+}
+.preview-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 0.88rem;
+  color: var(--text-dark);
+}
+.preview-item:last-child { margin-bottom: 0; }
+.preview-icon { color: var(--red); flex-shrink: 0; margin-top: 2px; }
+
 @media (max-width: 900px) {
   .admin-app { flex-direction: column; }
   .admin-sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 12px; align-items: center; }
@@ -375,4 +438,5 @@ input, textarea, select { font-family: inherit; }
   .admin-main { padding: 20px; }
   .dash-panels { grid-template-columns: 1fr; }
   .modal-row { grid-template-columns: 1fr; }
+  .settings-grid { grid-template-columns: 1fr; }
 }

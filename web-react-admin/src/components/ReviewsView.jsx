@@ -12,8 +12,15 @@ const TABS = [
   { status: 'rejected', label: 'Rejected' },
 ];
 
-export default function ReviewsView({ onDataChanged }) {
-  const [status, setStatus] = useState('pending');
+export default function ReviewsView({ onDataChanged, initialStatus = 'pending' }) {
+  const [status, setStatus] = useState(initialStatus);
+
+  useEffect(() => {
+    if (initialStatus) {
+      setStatus(initialStatus);
+    }
+  }, [initialStatus]);
+
   const [reviews, setReviews] = useState(null);
   const [error, setError] = useState(null);
   const [editingReview, setEditingReview] = useState(null);

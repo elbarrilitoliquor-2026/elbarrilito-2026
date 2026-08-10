@@ -194,6 +194,50 @@ values
    'approved')
 on conflict do nothing;
 
+-- ------------------------------------------------------------
+-- 8. STORE SETTINGS TABLE (Editable contact info, address, hours, maps)
+-- ------------------------------------------------------------
+create table if not exists public.store_settings (
+  id text primary key default 'default',
+  address text not null default '3370 Shaver St, Pasadena, TX 77504',
+  google_maps_url text not null default 'https://www.google.com/maps/search/?api=1&query=3370+Shaver+St+Pasadena+TX+77504',
+  phone text not null default '+1 (713) 360-6526',
+  whatsapp_number text not null default '18327367123',
+  whatsapp_display text not null default '+1 (832) 736-7123',
+  email text not null default 'info@elbarrilito.com',
+  hours text not null default 'Mon–Sat: 10 AM – 9 PM · Sunday: Closed',
+  updated_at timestamptz not null default now()
+);
+
+alter table public.store_settings enable row level security;
+
+drop policy if exists "public read store settings" on public.store_settings;
+create policy "public read store settings"
+  on public.store_settings for select
+  to anon, authenticated
+  using (true);
+
+drop policy if exists "admin full access store settings" on public.store_settings;
+create policy "admin full access store settings"
+  on public.store_settings for all
+  to authenticated
+  using (true)
+  with check (true);
+
+insert into public.store_settings (id, address, google_maps_url, phone, whatsapp_number, whatsapp_display, email, hours)
+values (
+  'default',
+  '3370 Shaver St, Pasadena, TX 77504',
+  'https://www.google.com/maps/search/?api=1&query=3370+Shaver+St+Pasadena+TX+77504',
+  '+1 (713) 360-6526',
+  '18327367123',
+  '+1 (832) 736-7123',
+  'info@elbarrilito.com',
+  'Mon–Sat: 10 AM – 9 PM · Sunday: Closed'
+)
+on conflict (id) do nothing;
+
+
 -- ============================================================
 -- DONE. Next steps:
 -- 1. Project Settings → API → copy "Project URL" and "anon public" key

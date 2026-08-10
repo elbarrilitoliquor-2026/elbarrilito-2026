@@ -6,7 +6,7 @@ import BarChart from './BarChart';
 /* Ports loadDashboard()/loadWaSourceChart()/loadTopProductsChart()/
    loadRecentLeads() from admin/admin.js. */
 
-export default function DashboardView({ refreshKey }) {
+export default function DashboardView({ refreshKey, onNavigate }) {
   const [stats, setStats] = useState({
     products: '—',
     waTotal: '—',
@@ -111,29 +111,64 @@ export default function DashboardView({ refreshKey }) {
       </header>
 
       <div className="stat-grid">
-        <div className="stat-card">
+        <div
+          className="stat-card clickable"
+          onClick={() => onNavigate?.('catalogue')}
+          title="Click to manage Catalogue"
+        >
           <span className="stat-label">Total Products</span>
           <span className="stat-value">{stats.products}</span>
+          <span className="stat-card-hint">View Catalogue →</span>
         </div>
-        <div className="stat-card">
+
+        <div
+          className="stat-card clickable"
+          onClick={() => onNavigate?.('leads')}
+          title="Click to view WhatsApp Leads"
+        >
           <span className="stat-label">WhatsApp Clicks (All Time)</span>
           <span className="stat-value">{stats.waTotal}</span>
+          <span className="stat-card-hint">View Leads →</span>
         </div>
-        <div className="stat-card">
+
+        <div
+          className="stat-card clickable"
+          onClick={() => onNavigate?.('leads')}
+          title="Click to view WhatsApp Leads"
+        >
           <span className="stat-label">WhatsApp Clicks (Last 7 Days)</span>
           <span className="stat-value">{stats.waWeek}</span>
+          <span className="stat-card-hint">View Leads →</span>
         </div>
-        <div className="stat-card">
+
+        <div
+          className="stat-card clickable"
+          onClick={() => onNavigate?.('reviews', 'pending')}
+          title="Click to manage Pending Reviews"
+        >
           <span className="stat-label">Pending Reviews</span>
           <span className="stat-value">{stats.reviewsPending}</span>
+          <span className="stat-card-hint">Manage Pending →</span>
         </div>
-        <div className="stat-card">
+
+        <div
+          className="stat-card clickable"
+          onClick={() => onNavigate?.('reviews', 'approved')}
+          title="Click to view Approved Reviews"
+        >
           <span className="stat-label">Approved Reviews</span>
           <span className="stat-value">{stats.reviewsApproved}</span>
+          <span className="stat-card-hint">View Approved →</span>
         </div>
-        <div className="stat-card">
+
+        <div
+          className="stat-card clickable"
+          onClick={() => onNavigate?.('reviews', 'approved')}
+          title="Click to view Reviews"
+        >
           <span className="stat-label">Average Rating</span>
           <span className="stat-value">{stats.avgRating}</span>
+          <span className="stat-card-hint">View Reviews →</span>
         </div>
       </div>
 
