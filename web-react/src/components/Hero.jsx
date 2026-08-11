@@ -80,58 +80,7 @@ export default function Hero() {
           <div className="bottle-shadow shadow-wine" id="shadow-wine"></div>
           <div className="bottle-shadow shadow-bourbon" id="shadow-bourbon"></div>
 
-          <div className="pouring-container" id="pouring-container">
-            <svg className="pour-svg" id="wine-pour-svg" viewBox="0 0 600 500">
-              <defs>
-                <linearGradient id="wine-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#4a000b" stopOpacity="0.95" />
-                  <stop offset="40%" stopColor="#800020" stopOpacity="0.95" />
-                  <stop offset="100%" stopColor="#bd002a" stopOpacity="0.9" />
-                </linearGradient>
-                <filter id="liquid-glow-wine" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="2.5" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <path id="wine-stream-path" fill="url(#wine-grad)" filter="url(#liquid-glow-wine)" d="" />
-              <circle id="w-drop-1" cx="0" cy="0" r="5" fill="#800020" opacity="0" />
-              <circle id="w-drop-2" cx="0" cy="0" r="3.5" fill="#bd002a" opacity="0" />
-              <circle id="w-drop-3" cx="0" cy="0" r="4.5" fill="#4a000b" opacity="0" />
-              <circle id="w-drop-4" cx="0" cy="0" r="3" fill="#e21840" opacity="0" />
-            </svg>
 
-            <svg className="pour-svg" id="bourbon-pour-svg" viewBox="0 0 600 500">
-              <defs>
-                <linearGradient id="bourbon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#92400e" stopOpacity="0.95" />
-                  <stop offset="40%" stopColor="#d97706" stopOpacity="0.95" />
-                  <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.9" />
-                </linearGradient>
-                <filter id="liquid-glow-bourbon" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="2" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <path id="bourbon-stream-path" fill="url(#bourbon-grad)" filter="url(#liquid-glow-bourbon)" d="" />
-              <circle id="b-drop-1" cx="0" cy="0" r="4.5" fill="#d97706" opacity="0" />
-              <circle id="b-drop-2" cx="0" cy="0" r="3" fill="#fbbf24" opacity="0" />
-              <circle id="b-drop-3" cx="0" cy="0" r="4" fill="#92400e" opacity="0" />
-            </svg>
-
-            <div className="liquid-pool wine-pool" id="wine-pool">
-              <div className="pool-ripple"></div>
-            </div>
-
-            <div className="liquid-pool bourbon-pool" id="bourbon-pool">
-              <div className="pool-ripple"></div>
-            </div>
-          </div>
 
           <div className="bottle bottle-wine" id="bottle-wine">
             <img src="/assets/images/wine_bottle.png" alt="Premium Tequila Bottle — El Barrilito Liquor" fetchPriority="high" loading="eager" decoding="async" />
