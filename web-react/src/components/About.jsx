@@ -37,7 +37,7 @@ export default function About() {
           <a href="#store-info" className="btn-dark" id="about-cta">VISIT US</a>
         </div>
         <div className="about-img-wrap reveal-fade" id="about-img-wrap" ref={wrapRef}>
-          <img src="/assets/images/collection_bottles.png" alt="El Barrilito Liquor Store Premium Spirit Collection in Pasadena TX" className="about-img" loading="lazy" decoding="async" ref={imgRef} />
+          <img src="/assets/images/premium_tequila_bottles.png" alt="Premium Tequila Collection in Pasadena TX" className="about-img" loading="lazy" decoding="async" ref={imgRef} />
           <div className="organic-badge" id="organic-badge">
             <div className="badge-inner">
               <span className="badge-top">TRUSTED</span>

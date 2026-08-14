@@ -1,5 +1,5 @@
 /* ============================================================
-   PRESTIGE SPIRITS — Vintneri-Style Wine Shop
+   PRESTIGE SPIRITS â€” Vintneri-Style Wine Shop
    Palette: Milano Red + Lemon Chiffon
 ============================================================ */
 
@@ -264,12 +264,12 @@ main {
   margin-top: 80px;
 }
 
-/* Scrolled Horizontal Wine Bottle Silhouette Layout */
+/* ===== SCROLLED: Tequila Bottle Silhouette Navbar ===== */
 .navbar.scrolled {
   background: transparent;
   border-bottom: none;
   box-shadow: none;
-  padding: 10px 16px;
+  padding: 4px 16px; /* Reduced padding to balance vertical space */
 }
 
 .nav-inner {
@@ -282,71 +282,83 @@ main {
   justify-content: space-between;
   gap: 20px;
   position: relative;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 0;
   background: transparent;
 }
 
-/* Compact Horizontal Wine Bottle Outline & Capsule Pill on Scroll */
+/* â”€â”€ Tequila Bottle Body â€” now transparent, SVG does the visual â”€â”€ */
 .navbar.scrolled .nav-inner {
-  max-width: 1140px;
+  max-width: 1100px;
   height: 56px;
-  padding: 0 32px 0 24px;
-  background: linear-gradient(90deg, #560712 0%, #A80000 25%, #8E0000 70%, #3A030A 94%, #210105 100%);
-  border-radius: 28px 75px 75px 28px; /* Curved base on left, tapered bottle neck on right */
-  border: 1px solid rgba(255, 250, 205, 0.45);
-  box-shadow: 0 10px 32px rgba(40, 3, 8, 0.65), inset 0 1px 2px rgba(255, 250, 205, 0.35), 0 0 20px rgba(168, 0, 0, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-/* Wine Bottle Cork / Cap Detail on Right End of Horizontal Bottle */
-.navbar.scrolled .nav-inner::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 12px;
-  height: 30px;
-  background: linear-gradient(180deg, #E6C280 0%, #B38637 50%, #8C621E 100%);
-  border-radius: 0 5px 5px 0;
-  border: 1px solid rgba(255, 250, 205, 0.6);
-  border-left: none;
+  padding: 0 165px 0 28px; /* Large right padding to prevent content from bleeding into the neck/cap */
+  background: transparent;
+  border-radius: 0;
+  border: none;
   box-shadow: none;
+  overflow: visible;
 }
 
-/* Wine Bottle Neck Ring Foil Accent */
-.navbar.scrolled .nav-inner::before {
-  content: '';
+/* â”€â”€ SVG Tequila Bottle Outline â€” positioned behind all nav content â”€â”€ */
+.bottle-outline-svg {
   position: absolute;
-  right: 18px;
   top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 48px;
-  background: rgba(255, 250, 205, 0.4);
-  border-radius: 2px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  z-index: -1;
   pointer-events: none;
+  overflow: visible;
+  filter: drop-shadow(0 8px 28px rgba(40, 3, 8, 0.55))
+          drop-shadow(0 0 18px rgba(168, 0, 0, 0.3));
+  animation: bottleAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Compact Logo, Typography & Controls when Scrolled */
+@keyframes bottleAppear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleX(0.92) scaleY(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(1) scaleY(1);
+  }
+}
+
+/* â”€â”€ Ensure content stacks above the SVG â”€â”€ */
+.navbar.scrolled .nav-left,
+.navbar.scrolled .nav-center,
+.navbar.scrolled .nav-right {
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove any pseudo-element fallbacks from the SVG approach */
+.navbar.scrolled .nav-inner::before,
+.navbar.scrolled .nav-inner::after,
+.navbar.scrolled .nav-right::after,
+.navbar.scrolled .nav-center::before {
+  content: none;
+}
+
+/* â”€â”€ Compact Logo, Typography & Controls when Scrolled â”€â”€ */
 .navbar.scrolled .nav-logo-img {
   width: 36px;
   height: 36px;
 }
 .navbar.scrolled .logo-script {
-  font-size: 1.45rem;
+  font-size: 1.35rem;
 }
 .navbar.scrolled .logo-sub {
-  font-size: 0.46rem;
+  font-size: 0.44rem;
   letter-spacing: 0.2em;
 }
 .navbar.scrolled .nav-links {
-  gap: 18px;
+  gap: 16px;
 }
 .navbar.scrolled .nav-link {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   padding: 4px 6px;
 }
 .navbar.scrolled .cart-btn {
@@ -354,7 +366,15 @@ main {
   height: 34px;
 }
 .navbar.scrolled .nav-address {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
+}
+
+/* â”€â”€ Subtle hover glow on bottle body â”€â”€ */
+.navbar.scrolled .nav-inner:hover .bottle-outline-svg {
+  filter: drop-shadow(0 8px 32px rgba(40, 3, 8, 0.7))
+          drop-shadow(0 0 24px rgba(168, 0, 0, 0.5))
+          drop-shadow(0 0 50px rgba(168, 0, 0, 0.2));
+  transition: filter 0.3s ease;
 }
 
 .nav-left { display: flex; align-items: center; }
@@ -479,7 +499,7 @@ main {
 }
 
 /* Nav right */
-.nav-right { display: flex; align-items: center; gap: 20px; justify-content: flex-end; }
+.nav-right { display: flex; align-items: center; gap: 20px; justify-content: flex-end; position: relative; }
 .nav-address {
   display: flex;
   align-items: center;
@@ -756,7 +776,7 @@ main {
   transform: translateX(4px);
 }
 
-/* ─── Hero Stage: two bottles standing on a wooden table ─── */
+/* â”€â”€â”€ Hero Stage: two bottles standing on a wooden table â”€â”€â”€ */
 .hero-stage {
   position: relative;
   height: clamp(420px, 40vw, 460px);
@@ -764,7 +784,7 @@ main {
   overflow: visible;
 }
 
-/* ─── Big Milano Red Outline Map of Texas framed behind Hero Bottles ─── */
+/* â”€â”€â”€ Big Milano Red Outline Map of Texas framed behind Hero Bottles â”€â”€â”€ */
 .texas-outline-map {
   position: absolute;
   top: 50%;
@@ -781,7 +801,7 @@ main {
   background-position: center;
 }
 
-/* ─── Extended Long Tasting Table Surface ─── */
+/* â”€â”€â”€ Extended Long Tasting Table Surface â”€â”€â”€ */
 .hero-table {
   position: absolute;
   left: 50%;
@@ -829,7 +849,7 @@ main {
   pointer-events: none;
 }
 
-/* ─── Pouring Liquid & Splash Overlay ─── */
+/* â”€â”€â”€ Pouring Liquid & Splash Overlay â”€â”€â”€ */
 .pouring-container {
   position: absolute;
   inset: 0;
@@ -888,7 +908,7 @@ main {
   100% { transform: scale(1.5); opacity: 0; }
 }
 
-/* ─── Bottles: High clarity, precise cut out PNG positioning ─── */
+/* â”€â”€â”€ Bottles: High clarity, precise cut out PNG positioning â”€â”€â”€ */
 .bottle {
   position: absolute;
   bottom: 48px;               /* base sits precisely on top of table top surface line */
@@ -956,11 +976,11 @@ main {
   }
 }
 
-/* ─── Short desktop viewports (laptops, non-maximized windows, browser
+/* â”€â”€â”€ Short desktop viewports (laptops, non-maximized windows, browser
    chrome + taskbar eating vertical space): the hero was sized for tall
    monitors and would run taller than the visible window, hiding the CTA
-   and quick links below the fold. Compact it so the whole hero — heading,
-   bottles, button — actually fits without scrolling. ─── */
+   and quick links below the fold. Compact it so the whole hero â€” heading,
+   bottles, button â€” actually fits without scrolling. â”€â”€â”€ */
 @media (min-width: 961px) and (max-height: 880px) {
   .hero-container { padding-top: 28px; padding-bottom: 28px; gap: 28px; }
   .hero-title { font-size: clamp(2.6rem, 5.2vw, 4.4rem); margin-bottom: 14px; }
@@ -1244,29 +1264,29 @@ main {
 }
 .gallery-item {
   overflow: hidden;
-  border-radius: 12px;
-  background: radial-gradient(circle at center, #FFFDE7 0%, #FEEA85 100%);
-  border: 1px solid rgba(168, 0, 0, 0.12);
+  border-radius: 16px;
+  background: #1a0a04;
+  border: 2px solid rgba(255, 200, 100, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
   height: 320px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(255, 200, 100, 0.1);
+  border-color: rgba(255, 215, 0, 0.4);
 }
 .gallery-item img {
-  width: auto;
-  max-width: 90%;
-  height: auto;
-  max-height: 270px;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.15));
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .gallery-item:hover img { transform: scale(1.06); }
-.arch-frame {
-  border-radius: 140px 140px 12px 12px;
-}
-.arch-frame img { height: auto; max-height: 280px; }
+
 
 /* ===== TASTING SECTION ===== */
 .tasting {
@@ -1415,7 +1435,7 @@ main {
   padding: 100px 0;
   position: relative;
 }
-/* ─── SHOP: Exact vineyard panorama sketch — mountain peaks + church spire + cypress + vine rows ─── */
+/* â”€â”€â”€ SHOP: Exact vineyard panorama sketch â€” mountain peaks + church spire + cypress + vine rows â”€â”€â”€ */
 .shop::before {
   content: '';
   position: absolute;
@@ -1444,7 +1464,7 @@ main {
 /* Products Slider
    The arrow buttons are normal flex siblings of the clip container (not
    absolutely positioned) so they always sit fully outside the card track
-   with their own reserved space — the track's overflow:hidden lives on
+   with their own reserved space â€” the track's overflow:hidden lives on
    .products-slider-clip only, never on the buttons, so an arrow can never
    end up overlapping a product photo at any viewport width. */
 .products-slider-wrap {
@@ -1647,7 +1667,7 @@ main {
   font-size: 0.96rem;
 }
 
-/* ADD button overlapping bottom-right corner of the product photo — in Website UI (Milano Red) */
+/* ADD button overlapping bottom-right corner of the product photo â€” in Website UI (Milano Red) */
 .prod-cart-btn {
   position: absolute;
   right: 8px;
@@ -1721,7 +1741,7 @@ main {
   .prod-size { font-size: 0.95rem; }
 }
 /* At <=768px each card now shows ~1-1.6 up (see getVisibleCount in
-   script.js) so cards are as wide as the desktop ones — keep their
+   script.js) so cards are as wide as the desktop ones â€” keep their
    typography close to desktop size instead of shrinking it down. */
 @media (max-width: 768px) {
   .product-card { padding: 14px 14px 16px 14px; border-radius: 14px; }
@@ -2175,7 +2195,7 @@ body.pdp-open { overflow: hidden; }
   position: relative;
   overflow: hidden;
 }
-/* ─── VINTAGE VINES: Large filled grape cluster silhouette (matching Vintneri screenshot) ─── */
+/* â”€â”€â”€ VINTAGE VINES: Large filled grape cluster silhouette (matching Vintneri screenshot) â”€â”€â”€ */
 .vintage::before {
   content: '';
   position: absolute;
@@ -3294,7 +3314,7 @@ body.pdp-open { overflow: hidden; }
   }
   .footer { padding: 56px 0 0; }
 
-  /* Testimonial cards keep desktop-sized padding/type by default — shrink
+  /* Testimonial cards keep desktop-sized padding/type by default â€” shrink
      them so they read as compact quotes on a phone instead of tall blocks. */
   .testi-inner .section-header { margin-bottom: 32px; }
   .testi-grid { gap: 16px; }
@@ -3378,7 +3398,7 @@ body.pdp-open { overflow: hidden; }
    RETRO-CINEMATIC TYPE REFINEMENTS + GSAP SUPPORT
 ============================================================ */
 
-/* Josefin Sans is geometric/thin — give body copy a touch more presence */
+/* Josefin Sans is geometric/thin â€” give body copy a touch more presence */
 body { letter-spacing: 0.01em; }
 .section-body, .hero-desc, .step-desc, .wcu-desc, .testi-text { font-weight: 400; }
 
@@ -3435,7 +3455,7 @@ body { letter-spacing: 0.01em; }
 }
 
 /* ============================================================
-   PROMOTIONAL BANNER — Bilingual Mexican/Spanish Section
+   PROMOTIONAL BANNER â€” Bilingual Mexican/Spanish Section
 ============================================================ */
 .promo-banner {
   background: linear-gradient(135deg, var(--burgundy-dark) 0%, var(--green-dark) 50%, var(--burgundy) 100%);
@@ -4687,4 +4707,628 @@ body { letter-spacing: 0.01em; }
   }
 }
 
+/* ===== TEQUILA HIGHLIGHT ===== */
+.tequila-highlight {
+  position: relative;
+  width: 100%;
+  padding: 120px 24px;
+  background-image: url('/assets/images/agave_field.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.tequila-highlight-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(40, 8, 8, 0.75);
+}
+.tequila-highlight-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+}
+.tequila-highlight-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.tequila-quote {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-top: 16px;
+}
 
+/* ══════════════════════════════════════════════════════════════
+   VINTAGE LED MARQUEE BOARD – "Welcome to the World of Tequila"
+   Chase-light border, hanging-sign animation, neon glow text
+   ══════════════════════════════════════════════════════════════ */
+
+.tequila-marquee-section {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 24px 100px;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255, 235, 160, 0.5) 0%, transparent 70%),
+    linear-gradient(180deg, #FFFDE7 0%, #FDF7E3 40%, #FFFDE7 100%);
+  overflow: visible;
+  perspective: 900px;
+}
+
+/* ── Hanging Chains ── */
+.marquee-chains {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  height: 50px;
+  z-index: 2;
+}
+.chain {
+  position: absolute;
+  top: 0;
+  width: 4px;
+  height: 50px;
+  background: repeating-linear-gradient(
+    180deg,
+    #8B7355 0px, #8B7355 6px,
+    #6B5340 6px, #6B5340 8px,
+    transparent 8px, transparent 10px
+  );
+  border-radius: 2px;
+  filter: drop-shadow(0 0 4px rgba(139, 115, 85, 0.4));
+}
+.chain::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border: 3px solid #8B7355;
+  border-radius: 50%;
+  background: transparent;
+}
+.chain-left  { left: 15%; }
+.chain-right { right: 15%; }
+
+/* ── The Main Board ── */
+.marquee-board {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  background:
+    linear-gradient(135deg, #FFF8DC 0%, #FFEBBA 30%, #FFF8DC 60%, #F5DEB3 100%);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.2),
+    0 0 60px rgba(255, 170, 50, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  /* Hanging animation origin */
+  transform-style: preserve-3d;
+}
+
+/* ── LED Bulbs Ring ── */
+.marquee-bulbs-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  pointer-events: none;
+  z-index: 3;
+}
+.marquee-bulb {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  /* Position bulbs around the perimeter using CSS custom properties */
+}
+
+/* Place bulbs along all four edges */
+.marquee-bulb {
+  /* Distribute bulbs evenly along the rectangle perimeter */
+  --perim-frac: calc(var(--bulb-i) / var(--bulb-total));
+  /* Top edge: 0–0.28, Right edge: 0.28–0.50, Bottom edge: 0.50–0.78, Left edge: 0.78–1.0 */
+}
+
+/* Top edge */
+.marquee-bulb:nth-child(-n+25) {
+  top: -4px;
+  left: calc((var(--bulb-i) / 24) * 100%);
+}
+/* Right edge */
+.marquee-bulb:nth-child(n+26):nth-child(-n+47) {
+  right: -4px;
+  top: calc(((var(--bulb-i) - 25) / 21) * 100%);
+  left: auto;
+}
+/* Bottom edge */
+.marquee-bulb:nth-child(n+48):nth-child(-n+72) {
+  bottom: -4px;
+  top: auto;
+  right: calc(((var(--bulb-i) - 47) / 24) * 100%);
+}
+/* Left edge */
+.marquee-bulb:nth-child(n+73) {
+  left: -4px;
+  bottom: calc(((var(--bulb-i) - 72) / 18) * 100%);
+  top: auto;
+}
+
+/* Chase-light color phases */
+.bulb-phase-0 {
+  background: #FFD700;
+  box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.9), 0 0 12px 4px rgba(255, 180, 0, 0.4);
+  animation: bulbChase0 1.5s ease-in-out infinite;
+}
+.bulb-phase-1 {
+  background: #FF6B35;
+  box-shadow: 0 0 6px 2px rgba(255, 107, 53, 0.9), 0 0 12px 4px rgba(255, 80, 20, 0.4);
+  animation: bulbChase1 1.5s ease-in-out infinite;
+}
+.bulb-phase-2 {
+  background: #FF4444;
+  box-shadow: 0 0 6px 2px rgba(255, 68, 68, 0.9), 0 0 12px 4px rgba(255, 40, 40, 0.4);
+  animation: bulbChase2 1.5s ease-in-out infinite;
+}
+
+@keyframes bulbChase0 {
+  0%, 100% { opacity: 1; transform: scale(1.1); }
+  33% { opacity: 0.25; transform: scale(0.7); }
+  66% { opacity: 0.5; transform: scale(0.85); }
+}
+@keyframes bulbChase1 {
+  0%, 100% { opacity: 0.5; transform: scale(0.85); }
+  33% { opacity: 1; transform: scale(1.1); }
+  66% { opacity: 0.25; transform: scale(0.7); }
+}
+@keyframes bulbChase2 {
+  0%, 100% { opacity: 0.25; transform: scale(0.7); }
+  33% { opacity: 0.5; transform: scale(0.85); }
+  66% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ── Inner Border (ornamental) ── */
+.marquee-inner-border {
+  border: 2px solid rgba(168, 0, 0, 0.35);
+  border-radius: 12px;
+  padding: 40px 36px;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(255, 255, 255, 0.8) 0%, transparent 60%),
+    rgba(255, 255, 255, 0.6);
+  position: relative;
+}
+
+/* Decorative corner ornaments */
+.marquee-inner-border::before,
+.marquee-inner-border::after {
+  content: '✦';
+  position: absolute;
+  font-size: 1.2rem;
+  color: #A80000;
+  text-shadow: 0 0 8px rgba(168, 0, 0, 0.3);
+}
+.marquee-inner-border::before {
+  top: 8px;
+  left: 14px;
+}
+.marquee-inner-border::after {
+  top: 8px;
+  right: 14px;
+}
+
+/* ── Content ── */
+.marquee-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+/* Eyebrow */
+.marquee-eyebrow {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #A80000;
+  text-shadow: none;
+  margin: 0;
+}
+
+/* Main Heading – Neon Glow */
+.marquee-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 8px 0 0 0;
+}
+.marquee-heading-line {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #210105;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  line-height: 1.2;
+}
+.marquee-heading-accent {
+  font-size: 3.2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #A80000 0%, #D48C18 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: none;
+  animation: none;
+}
+
+/* Quote */
+.marquee-quote {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #4A4A4A;
+  font-weight: 500;
+  line-height: 1.7;
+  max-width: 640px;
+  margin: 0;
+}
+
+/* ── Image Showcase ── */
+.marquee-img-showcase {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 760px;
+  margin-top: 12px;
+}
+
+.marquee-img-card {
+  position: relative;
+  border: 2px solid rgba(168, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+  aspect-ratio: 4/3;
+}
+.marquee-img-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+  filter: brightness(0.8) saturate(0.9);
+}
+.marquee-img-card.active {
+  border-color: #A80000;
+  box-shadow: 0 0 20px rgba(168, 0, 0, 0.2), 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+.marquee-img-card.active img {
+  filter: brightness(1) saturate(1.1);
+  transform: scale(1.05);
+}
+.marquee-img-card:hover:not(.active) {
+  border-color: rgba(168, 0, 0, 0.5);
+  transform: translateY(-2px);
+}
+.marquee-img-card:hover:not(.active) img {
+  filter: brightness(0.8) saturate(1);
+}
+
+.marquee-img-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 12px;
+  background: linear-gradient(transparent, rgba(168, 0, 0, 0.9));
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #FFFDE7;
+  text-shadow: 0 0 4px rgba(0,0,0,0.8);
+  text-align: center;
+}
+
+/* ── CTA Button ── */
+.marquee-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px 36px;
+  border: 2px solid #A80000;
+  border-radius: 50px;
+  background: transparent;
+  text-decoration: none;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+.marquee-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(168, 0, 0, 0.15) 0%, rgba(212, 140, 24, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.marquee-cta:hover::before {
+  opacity: 1;
+}
+.marquee-cta:hover {
+  border-color: #D48C18;
+  box-shadow: 0 0 20px rgba(168, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+.marquee-cta-text {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: #A80000;
+  position: relative;
+  z-index: 1;
+  transition: color 0.4s ease;
+}
+.marquee-cta-arrow {
+  font-size: 1.3rem;
+  color: #A80000;
+  transition: transform 0.3s ease, color 0.4s ease;
+  position: relative;
+  z-index: 1;
+}
+.marquee-cta:hover .marquee-cta-text,
+.marquee-cta:hover .marquee-cta-arrow {
+  color: #D48C18;
+}
+.marquee-cta:hover .marquee-cta-arrow {
+  transform: translateX(4px);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .tequila-marquee-section {
+    padding: 50px 12px 60px;
+  }
+  .marquee-board {
+    padding: 14px;
+  }
+  .marquee-inner-border {
+    padding: 28px 16px;
+  }
+  .marquee-heading-line {
+    font-size: 1.6rem;
+  }
+  .marquee-heading-accent {
+    font-size: 2rem;
+  }
+  .marquee-quote {
+    font-size: 0.95rem;
+  }
+  .marquee-img-showcase {
+    grid-template-columns: 1fr;
+    max-width: 320px;
+  }
+  /* All cards bright on mobile — no dim/active states */
+  .marquee-img-card,
+  .marquee-img-card.active {
+    border-color: #FFD700;
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.25), 0 6px 20px rgba(0, 0, 0, 0.4);
+    transform: none;
+  }
+  .marquee-img-card img,
+  .marquee-img-card.active img {
+    filter: brightness(1) saturate(1.1);
+    transform: none;
+  }
+  /* Labels bright and glowing on mobile */
+  .marquee-img-label {
+    color: #FFD700;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    background: linear-gradient(transparent, rgba(10, 4, 2, 0.95));
+  }
+  .marquee-bulb {
+    width: 6px;
+    height: 6px;
+  }
+  .chain-left  { left: 10%; }
+  .chain-right { right: 10%; }
+  .marquee-chains { height: 35px; }
+  .chain { height: 35px; }
+}
+
+@media (max-width: 480px) {
+  .marquee-heading-line {
+    font-size: 1.3rem;
+  }
+  .marquee-heading-accent {
+    font-size: 1.7rem;
+  }
+  .marquee-cta {
+    padding: 12px 24px;
+  }
+  .marquee-cta-text {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+  }
+}
+
+
+/* ============================================================
+   PROMO BANNER - CINEMATIC RETRO DEPTH CARDS
+============================================================ */
+.promo-retro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px; /* Reduced gap to make cards wider */
+  max-width: 1200px; /* Increased max-width for wider cards */
+  margin: 0 auto 50px;
+  padding-top: 40px; /* Space for protruding bottles */
+}
+
+.promo-retro-card {
+  position: relative;
+  height: 280px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px 16px; /* Reduced horizontal padding to give more internal space */
+  text-align: left;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+.promo-retro-card:hover {
+  transform: translateY(-10px) rotateX(4deg);
+  z-index: 10;
+}
+
+/* Card Backgrounds with cinematic gradients */
+.pr-card-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  z-index: 1;
+  overflow: hidden;
+  border: 1px solid rgba(255, 215, 0, 0.15);
+}
+
+.pr-bg-tequila {
+  background: linear-gradient(145deg, #2b1105 0%, #1a0802 100%);
+  box-shadow: inset 0 0 40px rgba(255, 140, 0, 0.1);
+}
+
+.pr-bg-mezcal {
+  background: linear-gradient(145deg, #1f1b1a 0%, #0d0b0a 100%);
+  box-shadow: inset 0 0 40px rgba(100, 100, 100, 0.1);
+}
+
+.pr-bg-whiskey {
+  background: linear-gradient(145deg, #30160b 0%, #170904 100%);
+  box-shadow: inset 0 0 40px rgba(255, 200, 50, 0.08);
+}
+
+/* Text Content */
+.pr-card-content {
+  position: relative;
+  z-index: 10;
+  width: 45%; /* Strictly limit to left 45% so it NEVER touches the bottle */
+}
+
+/* Thick cinematic retro font */
+.pr-card-title {
+  font-family: 'Anton', 'Impact', var(--font-sans);
+  font-size: 1.8rem; /* Smaller font so words like WHISKEY fit comfortably */
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #FFFACD;
+  margin: 0 0 6px 0;
+  text-shadow: 2px 2px 0 #8B0000, 4px 4px 10px rgba(0,0,0,0.6);
+  letter-spacing: 0.05em;
+  transform: translateZ(30px); /* 3D pop */
+}
+
+.pr-card-desc {
+  font-family: var(--font-sans);
+  font-size: 0.85rem; /* Slightly smaller description */
+  color: rgba(255,255,255,0.85);
+  margin: 0 0 16px 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transform: translateZ(20px);
+}
+
+.pr-price-tag {
+  display: inline-block;
+  background: #FFD700;
+  color: #111;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.75rem; /* Smaller price tag */
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  transform: translateZ(40px);
+}
+
+/* Depth Effect PNG Bottles */
+.pr-bottle-img {
+  position: absolute;
+  bottom: 0;
+  right: -30px; /* Move further right */
+  height: 125%; /* Restored tall popping height! */
+  width: auto;
+  z-index: 5;
+  filter: drop-shadow(-10px 10px 15px rgba(0,0,0,0.8));
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: translateZ(50px); /* Restored the 3D depth pop! */
+}
+
+.promo-retro-card:hover .pr-bottle-img {
+  transform: translateZ(80px) translateY(-10px) scale(1.05);
+  filter: drop-shadow(-15px 20px 25px rgba(0,0,0,0.9)) drop-shadow(0 0 15px rgba(255,215,0,0.3));
+}
+
+/* Adjustments for specific bottles to fit nicely */
+.pr-bottle-mezcal {
+  height: 110%; /* Restored */
+  right: -40px; 
+}
+
+.pr-bottle-whiskey {
+  height: 120%; /* Restored tall height */
+  right: -50px; /* Pushed significantly right to uncover the Y in WHISKEY */
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .promo-retro-grid {
+    grid-template-columns: 1fr;
+    gap: 60px;
+    padding-top: 60px;
+    max-width: 400px;
+  }
+  .pr-card-content {
+    width: 50%;
+  }
+  .pr-bottle-img {
+    right: -25px;
+    height: 125%;
+  }
+  .pr-bottle-mezcal {
+    right: -35px;
+    height: 110%;
+  }
+  .pr-bottle-whiskey {
+    right: -40px;
+    height: 120%;
+  }
+}

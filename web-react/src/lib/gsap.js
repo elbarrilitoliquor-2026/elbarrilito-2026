@@ -17,6 +17,11 @@ export const prefersReducedMotion = () =>
    Ported 1:1 from gsap-animations.js `wrapWords`. Returns the array of
    inner spans (`.w-in`) that the caller animates (yPercent 118 -> 0). */
 export function wrapWords(root) {
+  if (!root.dataset.origHtml) {
+    root.dataset.origHtml = root.innerHTML;
+  } else {
+    root.innerHTML = root.dataset.origHtml;
+  }
   const inners = [];
   function proc(node) {
     const frag = document.createDocumentFragment();

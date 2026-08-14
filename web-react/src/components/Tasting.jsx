@@ -42,7 +42,7 @@ export default function Tasting() {
             <span className="stat-num">5★</span>
             <span className="stat-label-sm">Customer Rating</span>
           </div>
-          <img src="/assets/images/collection_bottles.png" alt="Prestige Spirits Collection — El Barrilito" className="tasting-main-img" loading="lazy" decoding="async" />
+          <img src="/assets/images/tequila_pour.png" alt="Premium Tequila Pour — El Barrilito" className="tasting-main-img" loading="lazy" decoding="async" />
           <div className="tasting-sub-grid">
             <img src="/assets/images/whiskey_product.png" alt="Premium Whiskey Selection" loading="lazy" decoding="async" />
             <img src="/assets/images/bourbon_product.png" alt="Bourbon & Tequila Collection" loading="lazy" decoding="async" />

@@ -34,6 +34,98 @@ export default function Navbar({ onOpenMobileMenu, mobileMenuOpen }) {
     <>
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`} id="navbar">
         <div className="nav-inner">
+          {/* ── Tequila Bottle Outline SVG (visible only when scrolled) ── */}
+          {scrolled && (
+            <svg
+              className="bottle-outline-svg"
+              viewBox="0 0 1200 70"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="bottleBodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#560712" />
+                  <stop offset="12%" stopColor="#A80000" />
+                  <stop offset="60%" stopColor="#8E0000" />
+                  <stop offset="82%" stopColor="#6B0010" />
+                  <stop offset="100%" stopColor="#3A030A" />
+                </linearGradient>
+                <linearGradient id="bottleNeckGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#4A0009" />
+                  <stop offset="50%" stopColor="#6B0010" />
+                  <stop offset="100%" stopColor="#3A030A" />
+                </linearGradient>
+                <linearGradient id="bottleCapGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#F0D88A" />
+                  <stop offset="30%" stopColor="#D4A84A" />
+                  <stop offset="50%" stopColor="#C69940" />
+                  <stop offset="70%" stopColor="#D4A84A" />
+                  <stop offset="100%" stopColor="#F0D88A" />
+                </linearGradient>
+                <linearGradient id="neckRingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="rgba(255,250,205,0.6)" />
+                  <stop offset="50%" stopColor="rgba(230,199,110,0.8)" />
+                  <stop offset="100%" stopColor="rgba(255,250,205,0.6)" />
+                </linearGradient>
+              </defs>
+
+              {/* Bottle body — wide cylinder with rounded left, shoulder taper on right */}
+              <path
+                d="
+                  M 28,2
+                  L 1020,2
+                  C 1040,2 1050,8 1055,14
+                  L 1065,22
+                  L 1130,22
+                  L 1130,22
+                  L 1130,48
+                  L 1065,48
+                  L 1055,56
+                  C 1050,62 1040,68 1020,68
+                  L 28,68
+                  C 12,68 2,58 2,35
+                  C 2,12 12,2 28,2
+                  Z
+                "
+                fill="url(#bottleBodyGrad)"
+                stroke="rgba(255,250,205,0.5)"
+                strokeWidth="1.5"
+              />
+
+              {/* Bottle Cap — golden ridged rectangle at the end */}
+              <rect
+                x="1130" y="17" width="18" height="36" rx="4" ry="4"
+                fill="url(#bottleCapGrad)"
+                stroke="rgba(255,250,205,0.7)"
+                strokeWidth="1.2"
+              />
+
+              {/* Cap ridges */}
+              <line x1="1131" y1="23" x2="1147" y2="23" stroke="rgba(0,0,0,0.1)" strokeWidth="0.8" />
+              <line x1="1131" y1="27" x2="1147" y2="27" stroke="rgba(0,0,0,0.1)" strokeWidth="0.8" />
+              <line x1="1131" y1="31" x2="1147" y2="31" stroke="rgba(0,0,0,0.1)" strokeWidth="0.8" />
+              <line x1="1131" y1="35" x2="1147" y2="35" stroke="rgba(0,0,0,0.1)" strokeWidth="0.8" />
+              <line x1="1131" y1="39" x2="1147" y2="39" stroke="rgba(0,0,0,0.1)" strokeWidth="0.8" />
+              <line x1="1131" y1="43" x2="1147" y2="43" stroke="rgba(0,0,0,0.1)" strokeWidth="0.8" />
+              <line x1="1131" y1="47" x2="1147" y2="47" stroke="rgba(0,0,0,0.1)" strokeWidth="0.8" />
+
+              {/* Neck ring / foil band */}
+              <rect
+                x="1060" y="20" width="5" height="30" rx="2" ry="2"
+                fill="url(#neckRingGrad)"
+              />
+
+              {/* Bottle label band (subtle center accent) */}
+              <rect
+                x="350" y="2" width="400" height="66" rx="0" ry="0"
+                fill="none"
+                stroke="rgba(255,250,205,0.1)"
+                strokeWidth="0.8"
+              />
+            </svg>
+          )}
+
           <div className="nav-left">
             <a href="#home" className="nav-logo" id="nav-logo">
               <img src="/assets/images/eb-logo.png" alt="EB Liquor Store Logo" className="nav-logo-img" />

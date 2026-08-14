@@ -15,6 +15,7 @@ import PromoBanner from './components/PromoBanner';
 import Shop from './components/Shop';
 import WhyChooseUs from './components/WhyChooseUs';
 import About from './components/About';
+import TequilaHighlight from './components/TequilaHighlight';
 import Ambassador from './components/Ambassador';
 import Varietals from './components/Varietals';
 import Vintage from './components/Vintage';
@@ -51,6 +52,7 @@ function AppContent() {
 
       <main>
         <Hero />
+        <TequilaHighlight />
         <AdBanner />
         <GalleryRow />
         <Tasting />
