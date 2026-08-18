@@ -34,6 +34,7 @@ const { z } = require('zod');
 const { supabaseAdmin } = require('../lib/supabaseAdmin');
 const { requireAdmin } = require('../middleware/requireAdmin');
 const { asyncHandler } = require('../middleware/errorHandler');
+const { validateUuid } = require('../middleware/validateUuid');
 
 const router = express.Router();
 
@@ -42,9 +43,9 @@ const DEFAULT_LIMIT = 12;
 const MAX_LIMIT = 100;
 
 const reviewCreateSchema = z.object({
-  customer_name: z.string().trim().min(1, 'customer_name is required'),
+  customer_name: z.string().trim().min(1, 'customer_name is required').max(100, 'name too long'),
   location: z
-    .union([z.string(), z.null()])
+    .union([z.string().max(120, 'location too long'), z.null()])
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : null)),
   rating: z.coerce
@@ -52,16 +53,16 @@ const reviewCreateSchema = z.object({
     .int('rating must be an integer')
     .min(1, 'rating must be between 1 and 5')
     .max(5, 'rating must be between 1 and 5'),
-  review_text: z.string().trim().min(1, 'review_text is required'),
+  review_text: z.string().trim().min(1, 'review_text is required').max(2000, 'review_text too long'),
   // status is intentionally NOT accepted from the client — see below.
 });
 
 const reviewUpdateSchema = z
   .object({
-    customer_name: z.string().trim().min(1).optional(),
-    location: z.union([z.string().trim(), z.null()]).optional(),
+    customer_name: z.string().trim().min(1).max(100).optional(),
+    location: z.union([z.string().trim().max(120), z.null()]).optional(),
     rating: z.coerce.number().int().min(1).max(5).optional(),
-    review_text: z.string().trim().min(1).optional(),
+    review_text: z.string().trim().min(1).max(2000).optional(),
     status: z.enum(VALID_STATUSES).optional(),
   })
   .refine((obj) => Object.keys(obj).length > 0, {
@@ -149,6 +150,7 @@ router.post(
 router.patch(
   '/:id',
   requireAdmin,
+  validateUuid,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const parsed = reviewUpdateSchema.safeParse(req.body);

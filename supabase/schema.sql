@@ -238,9 +238,116 @@ values (
 on conflict (id) do nothing;
 
 
+-- ------------------------------------------------------------
+-- 9. BANNERS TABLE (Admin-managed promo & ad banner cards)
+--    section = 'promo' → 3-card Exclusive Offers grid (PromoBanner.jsx)
+--    section = 'ad'    → scrolling marquee cards (AdBanner.jsx)
+-- ------------------------------------------------------------
+create table if not exists public.banners (
+  id          uuid primary key default gen_random_uuid(),
+  section     text not null check (section in ('promo', 'ad')),
+  title       text not null,
+  subtitle    text,           -- e.g. "Premium Agave Spirits"
+  badge       text,           -- e.g. "NEW LAUNCH", "LIMITED TIME"
+  badge_style text,           -- CSS suffix: 'gold' | 'orange' | 'green' | 'blue' | 'red'
+  discount    text,           -- Promo cards: "Up to 20% Off" (shown as price tag)
+  cta_label   text,           -- Ad cards: "CLAIM OFFER →"
+  image_url   text,           -- public image URL or /assets/images/... path
+  card_style  text,           -- CSS suffix for card color theme
+  is_active   boolean not null default true,
+  sort_order  integer not null default 0,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+create index if not exists banners_section_sort_idx
+  on public.banners (section, is_active, sort_order);
+
+drop trigger if exists trg_banners_updated_at on public.banners;
+create trigger trg_banners_updated_at
+  before update on public.banners
+  for each row execute function public.set_updated_at();
+
+alter table public.banners enable row level security;
+
+drop policy if exists "public read active banners" on public.banners;
+create policy "public read active banners"
+  on public.banners for select
+  to anon
+  using (is_active = true);
+
+drop policy if exists "admin full access banners" on public.banners;
+create policy "admin full access banners"
+  on public.banners for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- Seed: Promo banner cards (PromoBanner section)
+insert into public.banners (section, title, subtitle, discount, image_url, card_style, sort_order)
+values
+  ('promo', 'TEQUILA', 'Premium Agave Spirits', 'Up to 20% Off', '/assets/images/promo_tequila.png', 'tequila', 1),
+  ('promo', 'MEZCAL', 'Artisanal & Smoky', 'Special Deals', '/assets/images/promo_mezcal.png', 'mezcal', 2),
+  ('promo', 'WHISKEY', 'Rare Bourbons & Scotch', 'Members Only', '/assets/images/promo_whiskey.png', 'whiskey', 3)
+on conflict do nothing;
+
+-- Seed: Ad banner cards (AdBanner marquee section)
+insert into public.banners (section, title, subtitle, badge, badge_style, cta_label, image_url, card_style, sort_order)
+values
+  ('ad', '2026 Reserve Tequila & Mezcal', 'Handcrafted small-batch agave spirits. 20% OFF introductory release!', 'NEW LAUNCH', 'gold', 'CLAIM OFFER →', '/assets/images/limited_edition.png', 'burgundy', 1),
+  ('ad', 'Single Barrel 10-Yr Bourbon', 'Rich oak & caramel aroma. FREE DELIVERY on 2+ bottles in Pasadena.', 'LIMITED TIME', 'orange', 'ORDER NOW →', '/assets/images/bourbon_product.png', 'amber', 2),
+  ('ad', 'Chateau Bordeaux Grand Cru', '98-point sommelier selection. BUY 3 GET 15% OFF + free gift box.', 'STAFF PICK', 'green', 'EXPLORE WINES →', '/assets/images/wine_product.png', 'emerald', 3),
+  ('ad', 'Private Cask Single Malt', 'Aged in sherry casks with honeyed peat notes. SPECIAL $15 DISCOUNT.', 'VIP EXCLUSIVE', 'blue', 'VIEW WHISKEY →', '/assets/images/whiskey_product.png', 'slate', 4),
+  ('ad', 'Local Texas & Craft Beers', 'Freshly hopped IPAs, stouts & Belgian ales. MIX & MATCH 6-PACKS.', 'NEW IN STOCK', 'red', 'SHOP BREWS →', '/assets/images/craft_beer.png', 'sunset', 5)
+on conflict do nothing;
+
 -- ============================================================
 -- DONE. Next steps:
 -- 1. Project Settings → API → copy "Project URL" and "anon public" key
 -- 2. Paste them into ELBarrilito/js/supabase-config.js
 -- 3. Authentication → Add user (email + password) to create your admin login
 -- ============================================================
+
+-- ------------------------------------------------------------
+-- 10. SUPABASE STORAGE — product-images bucket
+--     Stores uploaded product and banner images.
+--     Run this AFTER the tables above are created.
+-- ------------------------------------------------------------
+
+-- Create the storage bucket (public = files are accessible via public URL)
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'product-images',
+  'product-images',
+  true,
+  5242880,  -- 5 MB per file
+  array['image/jpeg','image/jpg','image/png','image/webp','image/gif','image/svg+xml']
+)
+on conflict (id) do nothing;
+
+-- Allow authenticated admins to upload, update, and delete files
+drop policy if exists "admin upload images" on storage.objects;
+create policy "admin upload images"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'product-images');
+
+drop policy if exists "admin update images" on storage.objects;
+create policy "admin update images"
+  on storage.objects for update
+  to authenticated
+  using (bucket_id = 'product-images');
+
+drop policy if exists "admin delete images" on storage.objects;
+create policy "admin delete images"
+  on storage.objects for delete
+  to authenticated
+  using (bucket_id = 'product-images');
+
+-- Allow anyone (anon) to read/view the uploaded images (public bucket)
+drop policy if exists "public read images" on storage.objects;
+create policy "public read images"
+  on storage.objects for select
+  to anon, authenticated
+  using (bucket_id = 'product-images');
+

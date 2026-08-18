@@ -48,23 +48,23 @@ const clickCreateSchema = z.object({
     error: () => `source must be one of ${VALID_SOURCES.join(', ')}`,
   }),
   product_name: z
-    .union([z.string(), z.null()])
+    .union([z.string().max(200, 'product_name too long'), z.null()])
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : null)),
   customer_name: z
-    .union([z.string(), z.null()])
+    .union([z.string().max(100, 'customer_name too long'), z.null()])
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : null)),
   customer_phone: z
-    .union([z.string(), z.null()])
+    .union([z.string().max(30, 'customer_phone too long'), z.null()])
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : null)),
   message: z
-    .union([z.string(), z.null()])
+    .union([z.string().max(2000, 'message too long'), z.null()])
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : null)),
   page_url: z
-    .union([z.string(), z.null()])
+    .union([z.string().max(2048, 'page_url too long'), z.null()])
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : null)),
 });
@@ -91,7 +91,7 @@ router.get(
   requireAdmin,
   asyncHandler(async (req, res) => {
     const page = Math.max(0, parseInt(req.query.page, 10) || 0);
-    const pageSize = Math.max(1, parseInt(req.query.pageSize, 10) || DEFAULT_PAGE_SIZE);
+    const pageSize = Math.min(100, Math.max(1, parseInt(req.query.pageSize, 10) || DEFAULT_PAGE_SIZE));
     const source = typeof req.query.source === 'string' && req.query.source ? req.query.source : undefined;
 
     if (source && !VALID_SOURCES.includes(source)) {

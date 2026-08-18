@@ -7,3 +7,33 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# ── Security Headers ───────────────────────────────────────────────────────
+# Applied to every response served by Netlify CDN.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Prevent clickjacking — disallow this site from being embedded in iframes.
+    X-Frame-Options = "DENY"
+
+    # Prevent MIME-type sniffing attacks.
+    X-Content-Type-Options = "nosniff"
+
+    # Control how much referrer info is sent when following links.
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # Disable browser features not needed by this app.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+    # Content Security Policy
+    # - default-src 'self'          → only load resources from same origin by default
+    # - script-src  'self'          → JS only from same origin (Vite bundles everything inline)
+    # - style-src   'self' 'unsafe-inline' → inline styles needed by React components
+    # - img-src     'self' data: https:    → images from self, data URIs, and any HTTPS source
+    # - connect-src 'self' https://*.supabase.co → XHR/fetch: self + Supabase API
+    # - font-src    'self' https://fonts.gstatic.com → Google Fonts
+    # - frame-ancestors 'none'      → belt-and-suspenders with X-Frame-Options
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+
+    # HTTP Strict Transport Security — tell browsers to always use HTTPS for 1 year.
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
