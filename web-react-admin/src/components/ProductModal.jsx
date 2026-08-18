@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../lib/supabaseClient';
+import ImageUploader from './ImageUploader';
 
 /* Ports openProductModal()/product-form submit/delete handlers from
    admin/admin.js exactly, including field defaults and coercions. */
@@ -148,13 +149,12 @@ export default function ProductModal({ product, onClose, onSaved }) {
             </div>
           </div>
 
-          <label className="field-label">Image URL</label>
-          <input
-            type="text"
-            className="modal-input"
-            placeholder="assets/images/wine_product.png"
-            value={fields.image_url}
-            onChange={(e) => update('image_url', e.target.value)}
+          <ImageUploader
+            label="Product Image"
+            value={fields.image_url || null}
+            onChange={(url) => update('image_url', url || '')}
+            bucket="product-images"
+            folder="products"
           />
 
           <div className="modal-row">

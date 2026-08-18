@@ -1,95 +1,135 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { supabaseClient } from '../lib/supabaseClient';
 
-const CARDS = [
+/* â”€â”€â”€ Fallback data (used when DB is empty or unavailable) â”€â”€â”€ */
+const FALLBACK_CARDS = [
   {
-    key: 'tequila',
-    cls: 'ad-card-burgundy',
-    label: 'Limited Edition Reserve Tequila Offer',
-    badgeCls: 'ad-badge-gold',
+    id: 'f-tequila',
+    card_style: 'burgundy',
     badge: 'NEW LAUNCH',
+    badge_style: 'gold',
     title: '2026 Reserve Tequila & Mezcal',
-    desc: <>Handcrafted small-batch agave spirits. <strong>20% OFF</strong> introductory release!</>,
-    cta: 'CLAIM OFFER →',
-    img: '/assets/images/limited_edition.png',
-    alt: '2026 Limited Edition Tequila',
+    subtitle: 'Handcrafted small-batch agave spirits. 20% OFF introductory release!',
+    cta_label: 'CLAIM OFFER â†’',
+    image_url: '/assets/images/limited_edition.png',
   },
   {
-    key: 'bourbon',
-    cls: 'ad-card-amber',
-    label: 'Single Barrel Bourbon Offer',
-    badgeCls: 'ad-badge-orange',
+    id: 'f-bourbon',
+    card_style: 'amber',
     badge: 'LIMITED TIME',
+    badge_style: 'orange',
     title: 'Single Barrel 10-Yr Bourbon',
-    desc: <>Rich oak &amp; caramel aroma. <strong>FREE DELIVERY</strong> on 2+ bottles in Pasadena.</>,
-    cta: 'ORDER NOW →',
-    img: '/assets/images/bourbon_product.png',
-    alt: 'Single Barrel Bourbon Whiskey',
+    subtitle: 'Rich oak & caramel aroma. FREE DELIVERY on 2+ bottles in Pasadena.',
+    cta_label: 'ORDER NOW â†’',
+    image_url: '/assets/images/bourbon_product.png',
   },
   {
-    key: 'wine',
-    cls: 'ad-card-emerald',
-    label: 'Bordeaux Grand Cru Wine Offer',
-    badgeCls: 'ad-badge-green',
+    id: 'f-wine',
+    card_style: 'emerald',
     badge: 'STAFF PICK',
+    badge_style: 'green',
     title: 'Chateau Bordeaux Grand Cru',
-    desc: <>98-point sommelier selection. <strong>BUY 3 GET 15% OFF</strong> + free gift box.</>,
-    cta: 'EXPLORE WINES →',
-    img: '/assets/images/wine_product.png',
-    alt: 'Chateau Bordeaux Wine',
+    subtitle: '98-point sommelier selection. BUY 3 GET 15% OFF + free gift box.',
+    cta_label: 'EXPLORE WINES â†’',
+    image_url: '/assets/images/wine_product.png',
   },
   {
-    key: 'scotch',
-    cls: 'ad-card-slate',
-    label: 'Single Malt Scotch Offer',
-    badgeCls: 'ad-badge-blue',
+    id: 'f-scotch',
+    card_style: 'slate',
     badge: 'VIP EXCLUSIVE',
+    badge_style: 'blue',
     title: 'Private Cask Single Malt',
-    desc: <>Aged in sherry casks with honeyed peat notes. <strong>SPECIAL $15 DISCOUNT</strong>.</>,
-    cta: 'VIEW WHISKEY →',
-    img: '/assets/images/whiskey_product.png',
-    alt: 'Single Malt Scotch Whiskey',
+    subtitle: 'Aged in sherry casks with honeyed peat notes. SPECIAL $15 DISCOUNT.',
+    cta_label: 'VIEW WHISKEY â†’',
+    image_url: '/assets/images/whiskey_product.png',
   },
   {
-    key: 'beer',
-    cls: 'ad-card-sunset',
-    label: 'Craft Beer Collection Offer',
-    badgeCls: 'ad-badge-red',
+    id: 'f-beer',
+    card_style: 'sunset',
     badge: 'NEW IN STOCK',
+    badge_style: 'red',
     title: 'Local Texas & Craft Beers',
-    desc: <>Freshly hopped IPAs, stouts &amp; Belgian ales. <strong>MIX &amp; MATCH 6-PACKS</strong>.</>,
-    cta: 'SHOP BREWS →',
-    img: '/assets/images/craft_beer.png',
-    alt: 'Craft Beer Selection',
+    subtitle: 'Freshly hopped IPAs, stouts & Belgian ales. MIX & MATCH 6-PACKS.',
+    cta_label: 'SHOP BREWS â†’',
+    image_url: '/assets/images/craft_beer.png',
   },
 ];
 
+/* â”€â”€â”€ Map card_style â†’ CSS class â”€â”€â”€ */
+const CARD_CLASS_MAP = {
+  burgundy: 'ad-card-burgundy',
+  amber:    'ad-card-amber',
+  emerald:  'ad-card-emerald',
+  slate:    'ad-card-slate',
+  sunset:   'ad-card-sunset',
+};
+
+/* â”€â”€â”€ Map badge_style â†’ CSS class â”€â”€â”€ */
+const BADGE_CLASS_MAP = {
+  gold:   'ad-badge-gold',
+  orange: 'ad-badge-orange',
+  green:  'ad-badge-green',
+  blue:   'ad-badge-blue',
+  red:    'ad-badge-red',
+};
+
 function AdCard({ card }) {
+  const cardCls  = CARD_CLASS_MAP[card.card_style]  || 'ad-card-burgundy';
+  const badgeCls = BADGE_CLASS_MAP[card.badge_style] || 'ad-badge-gold';
+
   return (
-    <a href="#shop" className={`ad-card ${card.cls}`} aria-label={card.label}>
+    <a href="#shop" className={`ad-card ${cardCls}`} aria-label={card.title}>
       <div className="ad-card-content">
-        <span className={`ad-badge ${card.badgeCls}`}>{card.badge}</span>
+        {card.badge && (
+          <span className={`ad-badge ${badgeCls}`}>{card.badge}</span>
+        )}
         <h3 className="ad-card-title">{card.title}</h3>
-        <p className="ad-card-desc">{card.desc}</p>
-        <span className="ad-cta">{card.cta}</span>
+        <p className="ad-card-desc">{card.subtitle}</p>
+        {card.cta_label && (
+          <span className="ad-cta">{card.cta_label}</span>
+        )}
       </div>
-      <div className="ad-card-img-wrap">
-        <img src={card.img} alt={card.alt} loading="lazy" decoding="async" />
-      </div>
+      {card.image_url && (
+        <div className="ad-card-img-wrap">
+          <img src={card.image_url} alt={card.title} loading="lazy" decoding="async" />
+        </div>
+      )}
     </a>
   );
 }
 
 export default function AdBanner() {
+  const [cards, setCards] = useState(FALLBACK_CARDS);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const trackRef = useRef(null);
-  
+
+  /* â”€â”€â”€ Fetch from Supabase â”€â”€â”€ */
+  useEffect(() => {
+    async function loadBanners() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('banners')
+          .select('id, title, subtitle, badge, badge_style, cta_label, image_url, card_style, sort_order')
+          .eq('section', 'ad')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true });
+
+        if (error) throw error;
+        if (data && data.length > 0) setCards(data);
+      } catch {
+        // silently fall back to hardcoded cards
+      }
+    }
+    loadBanners();
+  }, []);
+
   // Max reachable index calculation
   const getMaxIndex = () => {
     if (!trackRef.current || !trackRef.current.children[0]) return 0;
     const visibleWidth = trackRef.current.offsetWidth;
     const cardsPerView = Math.round(visibleWidth / trackRef.current.children[0].offsetWidth);
-    return Math.max(0, CARDS.length - cardsPerView);
+    return Math.max(0, cards.length - cardsPerView);
   };
 
   const handleScroll = () => {
@@ -128,7 +168,7 @@ export default function AdBanner() {
     }, 4000); // Scroll every 4 seconds
 
     return () => clearInterval(interval);
-  }, [activeIndex, isPaused]);
+  }, [activeIndex, isPaused, cards.length]);
 
   return (
     <section 
@@ -142,13 +182,13 @@ export default function AdBanner() {
       </div>
       <div className="ad-banner-marquee-wrap">
         <div className="ad-banner-track" ref={trackRef} onScroll={handleScroll}>
-          {CARDS.map((c) => <AdCard key={c.key} card={c} />)}
+          {cards.map((c) => <AdCard key={c.id} card={c} />)}
         </div>
       </div>
       
       {/* Flipkart-style animated indicators */}
       <div className="ad-carousel-indicators" aria-hidden="true">
-        {CARDS.map((_, i) => {
+        {cards.map((_, i) => {
           // Hide dots that represent unreachable scroll positions on desktop
           if (i > getMaxIndex()) return null;
           
@@ -165,5 +205,3 @@ export default function AdBanner() {
     </section>
   );
 }
-
-

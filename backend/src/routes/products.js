@@ -18,6 +18,7 @@ const { z } = require('zod');
 const { supabaseAdmin } = require('../lib/supabaseAdmin');
 const { requireAdmin } = require('../middleware/requireAdmin');
 const { asyncHandler } = require('../middleware/errorHandler');
+const { validateUuid } = require('../middleware/validateUuid');
 
 const router = express.Router();
 
@@ -27,36 +28,39 @@ const router = express.Router();
    same defaults ('Spirits', '1 bottle (750 ml)', rating 4.8, etc).
    ------------------------------------------------------------ */
 const productCreateSchema = z.object({
-  name: z.string().trim().min(1, 'name is required'),
+  name: z.string().trim().min(1, 'name is required').max(200, 'name too long'),
   category: z
     .string()
     .trim()
+    .max(100, 'category too long')
     .optional()
     .transform((v) => (v && v.length > 0 ? v : 'Spirits')),
   size: z
     .string()
     .trim()
+    .max(100, 'size too long')
     .optional()
     .transform((v) => (v && v.length > 0 ? v : '1 bottle (750 ml)')),
-  price: z.coerce.number({ required_error: 'price is required' }).finite(),
+  price: z.coerce.number({ required_error: 'price is required' }).finite().min(0).max(99999),
   old_price: z
-    .union([z.coerce.number().finite(), z.null(), z.literal('')])
+    .union([z.coerce.number().finite().min(0).max(99999), z.null(), z.literal('')])
     .optional()
     .transform((v) => (v === '' || v === null || v === undefined ? null : v)),
   image_url: z
-    .union([z.string(), z.null()])
+    .union([z.string().max(2048, 'image_url too long'), z.null()])
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : null)),
   badge: z
-    .union([z.string(), z.null()])
+    .union([z.string().trim().max(60, 'badge too long'), z.null()])
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : null)),
-  sort_order: z.coerce.number().int().optional().default(0),
-  rating: z.coerce.number().optional().default(4.8),
-  rating_count: z.coerce.number().int().optional().default(0),
+  sort_order: z.coerce.number().int().min(0).max(9999).optional().default(0),
+  rating: z.coerce.number().min(0).max(5).optional().default(4.8),
+  rating_count: z.coerce.number().int().min(0).optional().default(0),
   description: z
     .string()
     .trim()
+    .max(2000, 'description too long')
     .optional()
     .transform((v) => v || ''),
   is_active: z.boolean().optional().default(true),
@@ -66,17 +70,17 @@ const productCreateSchema = z.object({
    for both full edits and the is_active quick-toggle). */
 const productUpdateSchema = z
   .object({
-    name: z.string().trim().min(1).optional(),
-    category: z.string().trim().min(1).optional(),
-    size: z.string().trim().min(1).optional(),
-    price: z.coerce.number().finite().optional(),
-    old_price: z.union([z.coerce.number().finite(), z.null()]).optional(),
-    image_url: z.union([z.string().trim(), z.null()]).optional(),
-    badge: z.union([z.string().trim(), z.null()]).optional(),
-    sort_order: z.coerce.number().int().optional(),
-    rating: z.coerce.number().optional(),
-    rating_count: z.coerce.number().int().optional(),
-    description: z.string().trim().optional(),
+    name: z.string().trim().min(1).max(200).optional(),
+    category: z.string().trim().min(1).max(100).optional(),
+    size: z.string().trim().min(1).max(100).optional(),
+    price: z.coerce.number().finite().min(0).max(99999).optional(),
+    old_price: z.union([z.coerce.number().finite().min(0).max(99999), z.null()]).optional(),
+    image_url: z.union([z.string().trim().max(2048), z.null()]).optional(),
+    badge: z.union([z.string().trim().max(60), z.null()]).optional(),
+    sort_order: z.coerce.number().int().min(0).max(9999).optional(),
+    rating: z.coerce.number().min(0).max(5).optional(),
+    rating_count: z.coerce.number().int().min(0).optional(),
+    description: z.string().trim().max(2000).optional(),
     is_active: z.boolean().optional(),
   })
   .refine((obj) => Object.keys(obj).length > 0, {
@@ -138,6 +142,7 @@ router.post(
 router.patch(
   '/:id',
   requireAdmin,
+  validateUuid,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const parsed = productUpdateSchema.safeParse(req.body);
@@ -162,6 +167,7 @@ router.patch(
 router.delete(
   '/:id',
   requireAdmin,
+  validateUuid,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { error } = await supabaseAdmin.from('products').delete().eq('id', id);
