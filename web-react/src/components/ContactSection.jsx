@@ -90,27 +90,6 @@ export default function ContactSection() {
             <a href="https://www.google.com/maps/search/?api=1&query=3370+Shaver+St+Pasadena+TX+77504" target="_blank" rel="noopener" className="btn-dark contact-directions-btn">GET DIRECTIONS</a>
           </div>
 
-          <div className="contact-form-card reveal-up delay-1">
-            <h3 className="contact-form-heading">Send Us a Message</h3>
-            <form className="contact-form" id="contact-form" onSubmit={handleSubmit}>
-              <div className="contact-form-row">
-                <input type="text" id="contact-name" className="enq-input" placeholder="Your Name *" required value={name} onChange={(e) => setName(e.target.value)} />
-                <input type="tel" id="contact-phone" className="enq-input" placeholder="Phone / WhatsApp *" required value={phone} onChange={(e) => setPhone(e.target.value)} />
-              </div>
-              <input type="email" id="contact-email" className="enq-input contact-email-input" placeholder="Email (optional)" value={email} onChange={(e) => setEmail(e.target.value)} />
-              <textarea id="contact-msg" className="enq-textarea" placeholder="How can we help?" rows={4} required value={msg} onChange={(e) => setMsg(e.target.value)}></textarea>
-              <button type="submit" className="enq-submit-btn" id="contact-submit-btn" style={sent ? { background: '#1EBE5D' } : undefined}>
-                {sent ? (
-                  '✓ SENT TO WHATSAPP'
-                ) : (
-                  <>
-                    <WhatsAppIcon width={20} height={20} fill="#fff" />
-                    SEND MESSAGE ON WHATSAPP
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
         </div>
       </div>
     </section>
