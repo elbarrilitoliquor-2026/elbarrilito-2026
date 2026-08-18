@@ -1,3 +1,5 @@
+import React, { useState, useRef, useEffect } from 'react';
+
 const CARDS = [
   {
     key: 'tequila',
@@ -61,7 +63,7 @@ const CARDS = [
   },
 ];
 
-function AdCard({ card, dupIndex }) {
+function AdCard({ card }) {
   return (
     <a href="#shop" className={`ad-card ${card.cls}`} aria-label={card.label}>
       <div className="ad-card-content">
@@ -78,19 +80,90 @@ function AdCard({ card, dupIndex }) {
 }
 
 export default function AdBanner() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const trackRef = useRef(null);
+  
+  // Max reachable index calculation
+  const getMaxIndex = () => {
+    if (!trackRef.current || !trackRef.current.children[0]) return 0;
+    const visibleWidth = trackRef.current.offsetWidth;
+    const cardsPerView = Math.round(visibleWidth / trackRef.current.children[0].offsetWidth);
+    return Math.max(0, CARDS.length - cardsPerView);
+  };
+
+  const handleScroll = () => {
+    if (!trackRef.current) return;
+    const scrollLeft = trackRef.current.scrollLeft;
+    const childWidth = trackRef.current.children[0].offsetWidth + 16; 
+    
+    const newIndex = Math.round(scrollLeft / childWidth);
+    const maxIndex = getMaxIndex();
+    
+    setActiveIndex(Math.min(newIndex, maxIndex));
+  };
+
+  const scrollTo = (index) => {
+    if (!trackRef.current) return;
+    const childWidth = trackRef.current.children[0].offsetWidth + 16;
+    trackRef.current.scrollTo({
+      left: index * childWidth,
+      behavior: 'smooth'
+    });
+  };
+
+  // Auto-scroll logic
+  useEffect(() => {
+    if (isPaused) return;
+    
+    const interval = setInterval(() => {
+      const maxIndex = getMaxIndex();
+      let nextIndex = activeIndex + 1;
+      
+      if (nextIndex > maxIndex) {
+        nextIndex = 0; // Loop back to start
+      }
+      
+      scrollTo(nextIndex);
+    }, 4000); // Scroll every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [activeIndex, isPaused]);
+
   return (
-    <section className="ad-banner-section" id="ad-banner-section" aria-label="Special Offers and New Releases">
+    <section 
+      className="ad-banner-section" 
+      id="ad-banner-section" 
+      aria-label="Special Offers and New Releases"
+    >
       <div className="ad-banner-header">
         <span className="ad-banner-tag">EXCLUSIVE SPECIALS &amp; NEW ARRIVALS</span>
         <h2 className="ad-banner-title">Today&apos;s Featured Offers</h2>
       </div>
       <div className="ad-banner-marquee-wrap">
-        <div className="ad-banner-track">
-          {CARDS.map((c) => <AdCard key={`a-${c.key}`} card={c} />)}
-          {/* Duplicate set for seamless CSS marquee loop, same as original markup */}
-          {CARDS.map((c) => <AdCard key={`b-${c.key}`} card={c} />)}
+        <div className="ad-banner-track" ref={trackRef} onScroll={handleScroll}>
+          {CARDS.map((c) => <AdCard key={c.key} card={c} />)}
         </div>
+      </div>
+      
+      {/* Flipkart-style animated indicators */}
+      <div className="ad-carousel-indicators" aria-hidden="true">
+        {CARDS.map((_, i) => {
+          // Hide dots that represent unreachable scroll positions on desktop
+          if (i > getMaxIndex()) return null;
+          
+          return (
+            <button 
+               key={i} 
+               className={`ad-indicator-dot ${i === activeIndex ? 'active' : ''}`}
+               onClick={() => scrollTo(i)}
+               aria-label={`Go to offer ${i + 1}`}
+            />
+          );
+        })}
       </div>
     </section>
   );
 }
+
+
