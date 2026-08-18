@@ -20,16 +20,7 @@ export default function MobileMenu({ open, onClose }) {
     <>
       <div className={`mobile-menu-overlay${open ? ' open' : ''}`} id="mobile-menu-overlay" onClick={onClose} />
       <div className={`mobile-menu${open ? ' open' : ''}`} id="mobile-menu">
-        <div className="mobile-menu-header">
-          <div className="mob-logo">
-            <img src="/assets/images/eb-logo.png" alt="EB Logo" className="mob-logo-img" />
-            <div>
-              <span className="logo-script">El Barrilito</span>
-              <span className="logo-sub">LIQUOR STORE</span>
-            </div>
-          </div>
-          <button className="mobile-close" id="mobile-close" aria-label="Close menu" onClick={onClose}>✕</button>
-        </div>
+
         <ul className="mobile-nav-list">
           <li><a href="#home" className="mob-link" id="m-home" onClick={onClose}>Home</a></li>
           <li><a href="#about" className="mob-link" id="m-about" onClick={onClose}>About Us</a></li>

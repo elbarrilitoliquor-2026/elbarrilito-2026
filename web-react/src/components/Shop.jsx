@@ -3,11 +3,13 @@ import { useGSAP } from '@gsap/react';
 import { useRef } from 'react';
 import ProductSlider from './ProductSlider';
 import ProductModal from './ProductModal';
+import AllProductsModal from './AllProductsModal';
 import StatsBar from './StatsBar';
 import { gsap, prefersReducedMotion } from '../lib/gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const STATIC_FALLBACK_PRODUCTS = [
+  // ... unchanged fallback products ...
   {
     id: 1,
     name: 'Tequila Añejo',
@@ -74,6 +76,7 @@ const STATIC_FALLBACK_PRODUCTS = [
    reveal for `.product-card` elements as they scroll into view. */
 export default function Shop({ products, loading }) {
   const [detailProduct, setDetailProduct] = useState(null);
+  const [isAllProductsOpen, setIsAllProductsOpen] = useState(false);
   const shopRef = useRef(null);
   const displayProducts = products && products.length > 0 ? products : STATIC_FALLBACK_PRODUCTS;
 
@@ -100,15 +103,27 @@ export default function Shop({ products, loading }) {
     <section className="shop" id="shop" ref={shopRef}>
       <div className="shop-inner">
         <div className="section-header reveal-up">
-          <h2 className="section-heading">Our Spirit <em>Selection</em></h2>
+          <h2 className="section-heading">Our <em>Collections</em></h2>
         </div>
 
         <ProductSlider products={displayProducts} onOpenDetail={setDetailProduct} />
+
+        <div className="view-all-container">
+          <button className="btn-primary view-all-btn" onClick={() => setIsAllProductsOpen(true)}>
+            View All Products
+          </button>
+        </div>
 
         <StatsBar />
       </div>
 
       <ProductModal product={detailProduct} onClose={() => setDetailProduct(null)} />
+      <AllProductsModal 
+        isOpen={isAllProductsOpen} 
+        onClose={() => setIsAllProductsOpen(false)} 
+        products={displayProducts} 
+        onOpenDetail={setDetailProduct} 
+      />
     </section>
   );
 }

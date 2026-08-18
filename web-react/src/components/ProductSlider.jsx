@@ -16,10 +16,11 @@ export default function ProductSlider({ products, onOpenDetail }) {
   const [transform, setTransform] = useState('translateX(0px)');
   const touchState = useRef({ startX: 0, moveX: 0, isSwiping: false });
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
   function getVisibleCount() {
     const w = window.innerWidth;
-    if (w <= 480) return 1.15;
-    if (w <= 768) return 1.6;
+    if (w <= 768) return 2; // Not really used for slider logic anymore, but kept for safety
     if (w <= 1024) return 3.2;
     return 4;
   }
@@ -28,13 +29,21 @@ export default function ProductSlider({ products, onOpenDetail }) {
   }
 
   function update(targetCurrent) {
+    const mobile = window.innerWidth <= 768;
+    setIsMobile(mobile);
+    if (mobile) {
+      setCardStyle({});
+      setTransform('none');
+      return;
+    }
+
     const vis = getVisibleCount();
     const step = getStep();
     const max = Math.max(0, products.length - step);
     const clamped = Math.min(Math.max(targetCurrent, 0), max);
 
     const w = window.innerWidth;
-    const gap = w <= 480 ? 10 : w <= 768 ? 12 : 16;
+    const gap = 16;
     const containerW = clipRef.current ? clipRef.current.offsetWidth : window.innerWidth;
     const cardW = (containerW - gap * (vis - 1)) / vis;
 
@@ -53,8 +62,6 @@ export default function ProductSlider({ products, onOpenDetail }) {
   }
 
   useEffect(() => {
-    // Recompute (and snap to start) whenever the product list changes,
-    // mirroring the `eb:products-loaded` reset in the original.
     update(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products.length]);
@@ -69,22 +76,23 @@ export default function ProductSlider({ products, onOpenDetail }) {
   }, [current, products.length]);
 
   function handlePrev() {
-    update(current - getStep());
+    if (!isMobile) update(current - getStep());
   }
   function handleNext() {
-    update(current + getStep());
+    if (!isMobile) update(current + getStep());
   }
 
   function handleTouchStart(e) {
+    if (isMobile) return;
     touchState.current.startX = e.touches[0].clientX;
     touchState.current.isSwiping = true;
   }
   function handleTouchMove(e) {
-    if (!touchState.current.isSwiping) return;
+    if (isMobile || !touchState.current.isSwiping) return;
     touchState.current.moveX = e.touches[0].clientX - touchState.current.startX;
   }
   function handleTouchEnd() {
-    if (!touchState.current.isSwiping) return;
+    if (isMobile || !touchState.current.isSwiping) return;
     const { moveX } = touchState.current;
     if (moveX < -35) update(current + getStep());
     else if (moveX > 35) update(current - getStep());
@@ -92,29 +100,37 @@ export default function ProductSlider({ products, onOpenDetail }) {
     touchState.current.moveX = 0;
   }
 
+  const displayProducts = isMobile ? products.slice(0, 4) : products;
+
   return (
-    <div className="products-slider-wrap" ref={wrapRef}>
-      <button className="slider-btn prev-btn" id="prev-btn" aria-label="Previous" onClick={handlePrev}>
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-      </button>
+    <div className={`products-slider-wrap ${isMobile ? 'mobile-grid' : ''}`} ref={wrapRef}>
+      {!isMobile && (
+        <button className="slider-btn prev-btn" id="prev-btn" aria-label="Previous" onClick={handlePrev}>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+        </button>
+      )}
+      
       <div className="products-slider-clip" ref={clipRef}>
         <div
           className="products-slider"
           id="products-slider"
           ref={sliderRef}
-          style={{ display: 'flex', overflow: 'visible', width: '100%', transform, transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)' }}
+          style={isMobile ? {} : { display: 'flex', overflow: 'visible', width: '100%', transform, transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)' }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} style={cardStyle} onOpenDetail={onOpenDetail} />
+          {displayProducts.map((p) => (
+            <ProductCard key={p.id} product={p} style={isMobile ? {} : cardStyle} onOpenDetail={onOpenDetail} />
           ))}
         </div>
       </div>
-      <button className="slider-btn next-btn" id="next-btn" aria-label="Next" onClick={handleNext}>
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
-      </button>
+
+      {!isMobile && (
+        <button className="slider-btn next-btn" id="next-btn" aria-label="Next" onClick={handleNext}>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+        </button>
+      )}
     </div>
   );
 }
