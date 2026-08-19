@@ -39,6 +39,7 @@ export default function ProductModal({ product, onClose }) {
   const image = product.image_url || FALLBACK_PRODUCT_IMAGE;
   const qty = getQtyByName(product.name);
   const inCart = qty > 0;
+  const isOutOfStock = product.stock_quantity <= 0;
   
   let waText = settings.msg_tpl_enquiry || 'Hello, I am interested in {ProductName}. Can you provide more details?';
   waText = waText.replace(/{ProductName}/g, product.name);
@@ -73,7 +74,11 @@ export default function ProductModal({ product, onClose }) {
             </div>
             <p className="pdp-desc" id="pdp-desc">{product.description || ''}</p>
             <div className="pdp-actions">
-              {inCart ? (
+              {isOutOfStock ? (
+                <button className="prod-cart-btn pdp-cart-btn" style={{ background: '#999', cursor: 'not-allowed', color: '#fff', border: 'none' }} disabled>
+                  OUT OF STOCK
+                </button>
+              ) : inCart ? (
                 <button className="prod-cart-btn pdp-cart-btn in-cart" id="pdp-cart-btn">
                   <span className="btn-qty-action" data-btn-action="dec" onClick={() => decByName(product.name)}>−</span>
                   <span className="btn-qty-count">{qty}</span>

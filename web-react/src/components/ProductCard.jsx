@@ -26,6 +26,7 @@ export default function ProductCard({ product, style, onOpenDetail }) {
   const qty = getQtyByName(product.name);
   const inCart = qty > 0;
   const image = product.image_url || FALLBACK_PRODUCT_IMAGE;
+  const isOutOfStock = product.stock_quantity <= 0;
   
   let waText = settings.msg_tpl_enquiry || 'Hello, I am interested in {ProductName}. Can you provide more details?';
   waText = waText.replace(/{ProductName}/g, product.name);
@@ -61,7 +62,11 @@ export default function ProductCard({ product, style, onOpenDetail }) {
         <div className="prod-img-box">
           <img src={image} alt={product.name} loading="lazy" decoding="async" />
         </div>
-        {inCart ? (
+        {isOutOfStock ? (
+          <button className="prod-cart-btn" style={{ background: '#999', cursor: 'not-allowed', color: '#fff', border: 'none' }} disabled>
+            OUT OF STOCK
+          </button>
+        ) : inCart ? (
           <button className="prod-cart-btn in-cart" id={`pc-${product.id}`} data-product={product.name} data-price={price}>
             <span className="btn-qty-action" data-btn-action="dec" onClick={handleDec}>−</span>
             <span className="btn-qty-count">{qty}</span>
