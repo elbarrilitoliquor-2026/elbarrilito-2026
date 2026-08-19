@@ -14,7 +14,9 @@ export default function DashboardView({ refreshKey, onNavigate }) {
     reviewsPending: '—',
     reviewsApproved: '—',
     avgRating: '—',
+    salesTotal: '—',
   });
+  const [lowStockProducts, setLowStockProducts] = useState(null);
   const [waSourceCounts, setWaSourceCounts] = useState(null);
   const [topProductCounts, setTopProductCounts] = useState(null);
   const [recentLeads, setRecentLeads] = useState(null);
@@ -23,12 +25,13 @@ export default function DashboardView({ refreshKey, onNavigate }) {
     let cancelled = false;
 
     async function loadDashboard() {
-      const [productsRes, waTotalRes, waWeekRes, reviewsRes] = await Promise.all([
+      const [productsRes, waTotalRes, waWeekRes, reviewsRes, salesRes] = await Promise.all([
         supabaseClient.from('products').select('id', { count: 'exact', head: true }),
         supabaseClient.from('whatsapp_clicks').select('id', { count: 'exact', head: true }),
         supabaseClient.from('whatsapp_clicks').select('id', { count: 'exact', head: true })
           .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
         supabaseClient.from('reviews').select('status, rating'),
+        supabaseClient.from('sales').select('total_amount'),
       ]);
 
       if (cancelled) return;
@@ -40,6 +43,9 @@ export default function DashboardView({ refreshKey, onNavigate }) {
         ? (approved.reduce((s, r) => s + r.rating, 0) / approved.length).toFixed(1)
         : '—';
 
+      const sales = salesRes.data || [];
+      const totalRevenue = sales.reduce((sum, s) => sum + s.total_amount, 0);
+
       setStats({
         products: productsRes.count ?? 0,
         waTotal: waTotalRes.count ?? 0,
@@ -47,11 +53,21 @@ export default function DashboardView({ refreshKey, onNavigate }) {
         reviewsPending: pending,
         reviewsApproved: approved.length,
         avgRating,
+        salesTotal: totalRevenue.toFixed(2),
       });
 
+      loadLowStock();
       loadWaSourceChart();
       loadTopProductsChart();
       loadRecentLeads();
+    }
+
+    async function loadLowStock() {
+      const { data } = await supabaseClient.from('products').select('*');
+      if (cancelled) return;
+      if (data) {
+        setLowStockProducts(data.filter(p => p.stock_quantity <= p.low_stock_threshold));
+      }
     }
 
     async function loadWaSourceChart() {
@@ -133,7 +149,17 @@ export default function DashboardView({ refreshKey, onNavigate }) {
 
         <div
           className="stat-card clickable"
-          onClick={() => onNavigate?.('leads')}
+          onClick={() => onNavigate?.('billing')}
+          title="Click to view Billing & Sales"
+        >
+          <span className="stat-label">Total Sales Revenue</span>
+          <span className="stat-value">${stats.salesTotal}</span>
+          <span className="stat-card-hint">View Billing →</span>
+        </div>
+
+        <div
+          className="stat-card clickable"
+          onClick={() => onNavigate?.('catalogue')}
           title="Click to view WhatsApp Leads"
         >
           <span className="stat-label">WhatsApp Clicks (Last 7 Days)</span>
@@ -169,6 +195,32 @@ export default function DashboardView({ refreshKey, onNavigate }) {
           <span className="stat-label">Average Rating</span>
           <span className="stat-value">{stats.avgRating}</span>
           <span className="stat-card-hint">View Reviews →</span>
+        </div>
+      </div>
+
+      <div className="dash-panels" style={{ marginBottom: '2rem' }}>
+        <div className="dash-panel" style={{ borderLeft: '4px solid #a00000' }}>
+          <h2 style={{ color: '#a00000' }}>Low Stock Alerts</h2>
+          <div className="table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr><th>Product</th><th>Current Stock</th><th>Threshold</th></tr>
+              </thead>
+              <tbody>
+                {lowStockProducts === null ? null : lowStockProducts.length === 0 ? (
+                  <tr><td colSpan={3} className="empty-note">All products are adequately stocked.</td></tr>
+                ) : (
+                  lowStockProducts.map(p => (
+                    <tr key={p.id}>
+                      <td>{p.name}</td>
+                      <td style={{ color: '#a00000', fontWeight: 'bold' }}>{p.stock_quantity}</td>
+                      <td>{p.low_stock_threshold}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

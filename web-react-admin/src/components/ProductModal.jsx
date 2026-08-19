@@ -20,6 +20,8 @@ function fieldsFromProduct(product) {
     rating_count: product?.rating_count ?? 0,
     description: product?.description || '',
     is_active: product ? product.is_active : true,
+    stock_quantity: product?.stock_quantity ?? 0,
+    low_stock_threshold: product?.low_stock_threshold ?? 5,
   };
 }
 
@@ -54,6 +56,8 @@ export default function ProductModal({ product, onClose, onSaved }) {
       rating_count: parseInt(fields.rating_count, 10) || 0,
       description: fields.description.trim(),
       is_active: fields.is_active,
+      stock_quantity: parseInt(fields.stock_quantity, 10) || 0,
+      low_stock_threshold: parseInt(fields.low_stock_threshold, 10) || 0,
     };
 
     setStatus({ text: 'Saving…', type: '' });
@@ -156,6 +160,29 @@ export default function ProductModal({ product, onClose, onSaved }) {
             bucket="product-images"
             folder="products"
           />
+
+          <div className="modal-row">
+            <div>
+              <label className="field-label">Stock Quantity</label>
+              <input
+                type="number"
+                className="modal-input"
+                min="0"
+                value={fields.stock_quantity}
+                onChange={(e) => update('stock_quantity', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="field-label">Low Stock Alert Threshold</label>
+              <input
+                type="number"
+                className="modal-input"
+                min="0"
+                value={fields.low_stock_threshold}
+                onChange={(e) => update('low_stock_threshold', e.target.value)}
+              />
+            </div>
+          </div>
 
           <div className="modal-row">
             <div>

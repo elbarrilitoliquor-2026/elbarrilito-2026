@@ -23,6 +23,8 @@ create table if not exists public.products (
   rating_count  integer not null default 0,
   is_active     boolean not null default true,        -- controls visibility on client site
   sort_order    integer not null default 0,           -- manual ordering in the slider
+  stock_quantity integer not null default 0,          -- current inventory
+  low_stock_threshold integer not null default 5,     -- alert when stock drops below this
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );
@@ -63,6 +65,29 @@ create table if not exists public.whatsapp_clicks (
 
 create index if not exists whatsapp_clicks_created_idx on public.whatsapp_clicks (created_at desc);
 create index if not exists whatsapp_clicks_source_idx on public.whatsapp_clicks (source);
+
+-- ------------------------------------------------------------
+-- 3.5. SALES & BILLING  (admin-managed)
+-- ------------------------------------------------------------
+create table if not exists public.sales (
+  id            uuid primary key default gen_random_uuid(),
+  sale_type     text not null check (sale_type in ('online', 'offline')),
+  total_amount  numeric(10,2) not null,
+  customer_name text,
+  notes         text,
+  created_at    timestamptz not null default now()
+);
+
+create table if not exists public.sale_items (
+  id            uuid primary key default gen_random_uuid(),
+  sale_id       uuid not null references public.sales(id) on delete cascade,
+  product_id    uuid not null references public.products(id) on delete restrict,
+  quantity      integer not null,
+  price_at_time numeric(10,2) not null
+);
+
+create index if not exists sales_created_idx on public.sales (created_at desc);
+
 
 -- ------------------------------------------------------------
 -- 4. updated_at auto-touch trigger (products & reviews)
@@ -145,6 +170,24 @@ create policy "admin read whatsapp clicks"
 drop policy if exists "admin manage whatsapp clicks" on public.whatsapp_clicks;
 create policy "admin manage whatsapp clicks"
   on public.whatsapp_clicks for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- SALES & SALE_ITEMS
+alter table public.sales enable row level security;
+alter table public.sale_items enable row level security;
+
+drop policy if exists "admin full access sales" on public.sales;
+create policy "admin full access sales"
+  on public.sales for all
+  to authenticated
+  using (true)
+  with check (true);
+
+drop policy if exists "admin full access sale items" on public.sale_items;
+create policy "admin full access sale items"
+  on public.sale_items for all
   to authenticated
   using (true)
   with check (true);

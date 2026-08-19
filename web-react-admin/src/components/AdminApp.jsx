@@ -6,6 +6,7 @@ import LeadsView from './LeadsView';
 import ReviewsView from './ReviewsView';
 import SettingsView from './SettingsView';
 import BannersView from './BannersView';
+import BillingView from './BillingView';
 
 export default function AdminApp() {
   const [activeView, setActiveView] = useState('dashboard');
@@ -43,6 +44,7 @@ export default function AdminApp() {
         )}
         {activeView === 'settings' && <SettingsView />}
         {activeView === 'banners' && <BannersView />}
+        {activeView === 'billing' && <BillingView />}
       </main>
     </div>
   );

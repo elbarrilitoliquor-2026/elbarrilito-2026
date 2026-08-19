@@ -56,14 +56,14 @@ export default function CatalogueView({ onDataChanged }) {
           <thead>
             <tr>
               <th></th><th>Name</th><th>Category</th><th>Price</th><th>Old Price</th>
-              <th>Rating</th><th>Active</th><th>Order</th><th>Actions</th>
+              <th>Rating</th><th>Stock</th><th>Active</th><th>Order</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {error ? (
-              <tr><td colSpan={9} className="empty-note">Error loading products: {error}</td></tr>
+              <tr><td colSpan={10} className="empty-note">Error loading products: {error}</td></tr>
             ) : products === null ? null : products.length === 0 ? (
-              <tr><td colSpan={9} className="empty-note">No products yet. Click "Add Product" to create one.</td></tr>
+              <tr><td colSpan={10} className="empty-note">No products yet. Click "Add Product" to create one.</td></tr>
             ) : (
               products.map((p) => (
                 <tr key={p.id} data-id={p.id}>
@@ -73,6 +73,11 @@ export default function CatalogueView({ onDataChanged }) {
                   <td>${Number(p.price).toFixed(2)}</td>
                   <td>{p.old_price ? '$' + Number(p.old_price).toFixed(2) : '—'}</td>
                   <td>{Number(p.rating).toFixed(1)} ({p.rating_count})</td>
+                  <td>
+                    <span style={{ color: p.stock_quantity <= p.low_stock_threshold ? '#a00000' : 'inherit', fontWeight: p.stock_quantity <= p.low_stock_threshold ? 'bold' : 'normal' }}>
+                      {p.stock_quantity}
+                    </span>
+                  </td>
                   <td>
                     <label className="toggle-switch">
                       <input
