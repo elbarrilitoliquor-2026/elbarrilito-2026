@@ -9,6 +9,9 @@ const DEFAULT_SETTINGS = {
   whatsapp_display: '+1 (832) 736-7123',
   email: 'info@elbarrilito.com',
   hours: 'Mon–Sat: 10 AM – 9 PM · Sunday: Closed',
+  msg_tpl_order: '*NEW ORDER — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n📍 *Order Type:* {OrderType}\n📌 *Address/Note:* {Address}\n━━━━━━━━━━━━━━━━━━━━━━\n*ORDER ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*Subtotal:* ${Subtotal}\n*TX Tax (8.25%):* ${Tax}\n*TOTAL BILLING:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nHello! Please confirm my order availability and pickup/delivery time. Thank you!',
+  msg_tpl_enquiry: 'Hello, I am interested in {ProductName}. Can you provide more details?',
+  msg_tpl_offline_bill: '*INVOICE — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n━━━━━━━━━━━━━━━━━━━━━━\n*ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*TOTAL PAID:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nThank you for your purchase! We hope to see you again soon.',
 };
 
 export default function SettingsView() {
@@ -39,6 +42,9 @@ export default function SettingsView() {
             whatsapp_display: data.whatsapp_display || DEFAULT_SETTINGS.whatsapp_display,
             email: data.email || DEFAULT_SETTINGS.email,
             hours: data.hours || DEFAULT_SETTINGS.hours,
+            msg_tpl_order: data.msg_tpl_order || DEFAULT_SETTINGS.msg_tpl_order,
+            msg_tpl_enquiry: data.msg_tpl_enquiry || DEFAULT_SETTINGS.msg_tpl_enquiry,
+            msg_tpl_offline_bill: data.msg_tpl_offline_bill || DEFAULT_SETTINGS.msg_tpl_offline_bill,
           });
         }
       } catch (err) {
@@ -70,6 +76,9 @@ export default function SettingsView() {
         whatsapp_display: form.whatsapp_display.trim(),
         email: form.email.trim(),
         hours: form.hours.trim(),
+        msg_tpl_order: form.msg_tpl_order.trim(),
+        msg_tpl_enquiry: form.msg_tpl_enquiry.trim(),
+        msg_tpl_offline_bill: form.msg_tpl_offline_bill.trim(),
         updated_at: new Date().toISOString(),
       };
 
@@ -204,6 +213,53 @@ export default function SettingsView() {
 
           <button type="submit" className="btn-primary" style={{ marginTop: '14px', width: '100%' }} disabled={saving}>
             {saving ? 'Saving Changes...' : 'Save Settings'}
+          </button>
+        </form>
+
+        <form className="settings-card" onSubmit={handleSubmit}>
+          <h2>Message Templates</h2>
+          <p style={{ fontSize: '0.84rem', color: 'var(--text-light)', marginBottom: '14px' }}>
+            Customize the pre-filled WhatsApp messages. You can use variables like {'{CustomerName}'}, {'{OrderLines}'}, {'{TotalBilling}'}, etc.
+          </p>
+
+          <div className="field-group">
+            <label className="field-label">Cart Checkout Template (Online Order)</label>
+            <textarea
+              className="login-input"
+              rows={12}
+              value={form.msg_tpl_order}
+              onChange={(e) => handleChange('msg_tpl_order', e.target.value)}
+              required
+            />
+            <span className="field-help">Variables: {'{CustomerName}'}, {'{CustomerPhone}'}, {'{OrderType}'}, {'{Address}'}, {'{OrderLines}'}, {'{Subtotal}'}, {'{Tax}'}, {'{TotalBilling}'}</span>
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">Offline Bill Template (In-Store Print/Send)</label>
+            <textarea
+              className="login-input"
+              rows={8}
+              value={form.msg_tpl_offline_bill}
+              onChange={(e) => handleChange('msg_tpl_offline_bill', e.target.value)}
+              required
+            />
+            <span className="field-help">Variables: {'{CustomerName}'}, {'{CustomerPhone}'}, {'{OrderLines}'}, {'{TotalBilling}'}</span>
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">General Product Enquiry Template</label>
+            <textarea
+              className="login-input"
+              rows={3}
+              value={form.msg_tpl_enquiry}
+              onChange={(e) => handleChange('msg_tpl_enquiry', e.target.value)}
+              required
+            />
+            <span className="field-help">Variables: {'{ProductName}'}</span>
+          </div>
+
+          <button type="submit" className="btn-primary" style={{ marginTop: '14px', width: '100%' }} disabled={saving}>
+            {saving ? 'Saving Changes...' : 'Save Templates'}
           </button>
         </form>
 

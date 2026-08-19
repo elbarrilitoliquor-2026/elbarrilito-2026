@@ -150,7 +150,7 @@ export default function DashboardView({ refreshKey, onNavigate }) {
         <div
           className="stat-card clickable"
           onClick={() => onNavigate?.('billing')}
-          title="Click to view Billing & Sales"
+          title="Click to view Offline Billing"
         >
           <span className="stat-label">Total Sales Revenue</span>
           <span className="stat-value">${stats.salesTotal}</span>

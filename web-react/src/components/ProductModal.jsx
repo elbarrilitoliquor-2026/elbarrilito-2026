@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { useStoreSettings } from '../hooks/useStoreSettings';
 import { trackWhatsAppClick } from '../hooks/useWhatsAppTracking';
 import { buildWaUrl, FALLBACK_PRODUCT_IMAGE } from '../lib/constants';
 import { computeOffPct, formatRatingCount } from './ProductCard';
@@ -9,6 +10,7 @@ import WhatsAppIcon from './WhatsAppIcon';
    from script.js `openProductDetail()` / `closeProductDetail()`. */
 export default function ProductModal({ product, onClose }) {
   const { addItem, incByName, decByName, getQtyByName } = useCart();
+  const { settings } = useStoreSettings();
 
   useEffect(() => {
     function onKeydown(e) {
@@ -37,8 +39,11 @@ export default function ProductModal({ product, onClose }) {
   const image = product.image_url || FALLBACK_PRODUCT_IMAGE;
   const qty = getQtyByName(product.name);
   const inCart = qty > 0;
-  const waText = `Hi! I'm interested in ${product.name} ($${price.toFixed(2)}). Is it available?`;
-  const waHref = buildWaUrl(waText);
+  
+  let waText = settings.msg_tpl_enquiry || 'Hello, I am interested in {ProductName}. Can you provide more details?';
+  waText = waText.replace(/{ProductName}/g, product.name);
+  
+  const waHref = buildWaUrl(waText, settings.whatsapp_number);
 
   function handleWaClick() {
     trackWhatsAppClick({ source: 'product', productName: product.name, message: waText });

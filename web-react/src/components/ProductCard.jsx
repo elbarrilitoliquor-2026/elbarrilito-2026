@@ -1,4 +1,5 @@
 import { useCart } from '../context/CartContext';
+import { useStoreSettings } from '../hooks/useStoreSettings';
 import { trackWhatsAppClick } from '../hooks/useWhatsAppTracking';
 import { buildWaUrl, FALLBACK_PRODUCT_IMAGE } from '../lib/constants';
 import WhatsAppIcon from './WhatsAppIcon';
@@ -18,14 +19,18 @@ export function computeOffPct(price, oldPrice) {
     sets flexShrink/width/marginRight directly on each `.product-card`. */
 export default function ProductCard({ product, style, onOpenDetail }) {
   const { addItem, incByName, decByName, getQtyByName } = useCart();
+  const { settings } = useStoreSettings();
   const price = Number(product.price);
   const oldPrice = product.old_price != null ? Number(product.old_price) : null;
   const offPct = computeOffPct(price, oldPrice);
   const qty = getQtyByName(product.name);
   const inCart = qty > 0;
   const image = product.image_url || FALLBACK_PRODUCT_IMAGE;
-  const waText = `Hi! I'm interested in ${product.name} ($${price.toFixed(2)}). Is it available?`;
-  const waHref = buildWaUrl(waText);
+  
+  let waText = settings.msg_tpl_enquiry || 'Hello, I am interested in {ProductName}. Can you provide more details?';
+  waText = waText.replace(/{ProductName}/g, product.name);
+  
+  const waHref = buildWaUrl(waText, settings.whatsapp_number);
 
   function handleAddClick(e) {
     e.stopPropagation();

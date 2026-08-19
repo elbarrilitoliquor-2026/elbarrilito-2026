@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { trackWhatsAppClick } from '../hooks/useWhatsAppTracking';
-import { WHATSAPP_NUMBER, WHATSAPP_DISPLAY } from '../lib/constants';
+import { useStoreSettings } from '../hooks/useStoreSettings';
 import WhatsAppIcon from './WhatsAppIcon';
 
 /* Ports script.js `initCartDrawer()`'s WhatsApp checkout message builder
@@ -9,6 +9,7 @@ import WhatsAppIcon from './WhatsAppIcon';
    same message template/emoji/line separators). */
 export default function CartDrawer() {
   const { cart, isOpen, closeDrawer, incByIndex, decByIndex, removeByIndex, subtotal, tax, total } = useCart();
+  const { settings } = useStoreSettings();
   const [custName, setCustName] = useState('');
   const [custPhone, setCustPhone] = useState('');
   const [orderType, setOrderType] = useState('Store Pickup (Free)');
@@ -44,9 +45,18 @@ export default function CartDrawer() {
     }
 
     const orderLines = cart.map((i) => `• ${i.qty}x ${i.name} — $${(i.price * i.qty).toFixed(2)}`).join('\n');
-    const waMsg = `*NEW ORDER — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* ${name}\n📞 *Phone:* ${phone}\n📍 *Order Type:* ${orderType}\n📌 *Address/Note:* ${addr}\n━━━━━━━━━━━━━━━━━━━━━━\n*ORDER ITEMS:*\n${orderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*Subtotal:* $${subtotal.toFixed(2)}\n*TX Tax (8.25%):* $${tax.toFixed(2)}\n*TOTAL BILLING:* $${total.toFixed(2)}\n━━━━━━━━━━━━━━━━━━━━━━\nHello! Please confirm my order availability and pickup/delivery time. Thank you!`;
+    let waMsg = settings.msg_tpl_order || '';
+    waMsg = waMsg.replace(/{CustomerName}/g, name)
+                 .replace(/{CustomerPhone}/g, phone)
+                 .replace(/{OrderType}/g, orderType)
+                 .replace(/{Address}/g, addr)
+                 .replace(/{OrderLines}/g, orderLines)
+                 .replace(/{Subtotal}/g, subtotal.toFixed(2))
+                 .replace(/{Tax}/g, tax.toFixed(2))
+                 .replace(/{TotalBilling}/g, total.toFixed(2));
 
-    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMsg)}`;
+    const phoneNum = settings.whatsapp_number || '18327367123';
+    const waUrl = `https://wa.me/${phoneNum}?text=${encodeURIComponent(waMsg)}`;
     window.open(waUrl, '_blank', 'noopener');
 
     trackWhatsAppClick({
@@ -136,7 +146,7 @@ export default function CartDrawer() {
             <WhatsAppIcon width={20} height={20} fill="#fff" />
             PLACE ORDER ON WHATSAPP
           </a>
-          <p className="cart-wa-note">Your billing &amp; order items will be sent to WhatsApp ({WHATSAPP_DISPLAY}) for instant checkout.</p>
+          <p className="cart-wa-note">Your billing &amp; order items will be sent to WhatsApp ({settings.whatsapp_display || ''}) for instant checkout.</p>
         </div>
       </aside>
     </>

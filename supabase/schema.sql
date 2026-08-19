@@ -249,6 +249,9 @@ create table if not exists public.store_settings (
   whatsapp_display text not null default '+1 (832) 736-7123',
   email text not null default 'info@elbarrilito.com',
   hours text not null default 'Mon–Sat: 10 AM – 9 PM · Sunday: Closed',
+  msg_tpl_order text,
+  msg_tpl_enquiry text,
+  msg_tpl_offline_bill text,
   updated_at timestamptz not null default now()
 );
 
@@ -267,7 +270,7 @@ create policy "admin full access store settings"
   using (true)
   with check (true);
 
-insert into public.store_settings (id, address, google_maps_url, phone, whatsapp_number, whatsapp_display, email, hours)
+insert into public.store_settings (id, address, google_maps_url, phone, whatsapp_number, whatsapp_display, email, hours, msg_tpl_order, msg_tpl_enquiry, msg_tpl_offline_bill)
 values (
   'default',
   '3370 Shaver St, Pasadena, TX 77504',
@@ -276,7 +279,10 @@ values (
   '18327367123',
   '+1 (832) 736-7123',
   'info@elbarrilito.com',
-  'Mon–Sat: 10 AM – 9 PM · Sunday: Closed'
+  'Mon–Sat: 10 AM – 9 PM · Sunday: Closed',
+  '*NEW ORDER — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n📍 *Order Type:* {OrderType}\n📌 *Address/Note:* {Address}\n━━━━━━━━━━━━━━━━━━━━━━\n*ORDER ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*Subtotal:* ${Subtotal}\n*TX Tax (8.25%):* ${Tax}\n*TOTAL BILLING:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nHello! Please confirm my order availability and pickup/delivery time. Thank you!',
+  'Hello, I am interested in {ProductName}. Can you provide more details?',
+  '*INVOICE — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n━━━━━━━━━━━━━━━━━━━━━━\n*ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*TOTAL PAID:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nThank you for your purchase! We hope to see you again soon.'
 )
 on conflict (id) do nothing;
 
