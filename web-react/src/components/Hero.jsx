@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap, wrapWords, prefersReducedMotion } from '../lib/gsap';
 
@@ -7,6 +7,21 @@ import { gsap, wrapWords, prefersReducedMotion } from '../lib/gsap';
    simplified mobile path. Bottles/shadows/pour art stay static (CSS-only,
    same as the original — script.js never animated the SVG pour paths). */
 export default function Hero() {
+  const [ageConfirmed, setAgeConfirmed] = useState(() => sessionStorage.getItem('age-ok') === '1');
+  const tlRef = useRef(null);
+
+  useEffect(() => {
+    const handleAgeVerified = () => setAgeConfirmed(true);
+    window.addEventListener('age-verified', handleAgeVerified);
+    return () => window.removeEventListener('age-verified', handleAgeVerified);
+  }, []);
+
+  useEffect(() => {
+    if (ageConfirmed && tlRef.current) {
+      tlRef.current.play();
+    }
+  }, [ageConfirmed]);
+
   const titleRef = useRef(null);
   const descRef = useRef(null);
   const ctaRowRef = useRef(null);
@@ -39,7 +54,8 @@ export default function Hero() {
         const sWine = shadowWineRef.current;
         const sBourbon = shadowBourbonRef.current;
 
-        const mtl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.3 });
+        const mtl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.3, paused: !ageConfirmed });
+        tlRef.current = mtl;
         
         // Bottles fall with bounce
         if (bWine && bBourbon) {
@@ -63,7 +79,8 @@ export default function Hero() {
       const sWine = shadowWineRef.current;
       const sBourbon = shadowBourbonRef.current;
 
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.4 });
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.4, paused: !ageConfirmed });
+      tlRef.current = tl;
       
       // Bottles fall with realistic bounce
       if (bWine && bBourbon) {

@@ -2794,7 +2794,7 @@ body.pdp-open { overflow: hidden; }
 .store-overlay-card {
   position: absolute;
   bottom: -20px;
-  left: 30px;
+  right: 30px;
   background: var(--green-dark);
   color: white;
   padding: 20px 30px;
@@ -2913,10 +2913,10 @@ body.pdp-open { overflow: hidden; }
 }
 .contact-inner .section-header { text-align: center; margin-bottom: 56px; }
 .contact-grid {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 48px;
-  align-items: start;
 }
 .contact-details {
   display: flex;
@@ -2926,6 +2926,8 @@ body.pdp-open { overflow: hidden; }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 32px;
+  width: 100%;
+  max-width: 600px;
 }
 .contact-detail-row {
   display: flex;

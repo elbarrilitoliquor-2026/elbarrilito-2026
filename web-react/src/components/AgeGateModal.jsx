@@ -14,6 +14,7 @@ export default function AgeGateModal() {
       /* ignore */
     }
     setHidden(true);
+    window.dispatchEvent(new Event('age-verified'));
   }
 
   function handleNo() {
