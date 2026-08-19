@@ -107,7 +107,7 @@ input, textarea, select { font-family: inherit; }
 .login-error { margin-top: 14px; font-size: 0.82rem; color: var(--burgundy); min-height: 1.2em; }
 
 /* ===== ADMIN APP SHELL ===== */
-.admin-app { display: flex; min-height: 100vh; }
+.admin-app { display: flex; height: 100vh; overflow: hidden; }
 
 .admin-sidebar {
   width: 240px;
@@ -117,6 +117,7 @@ input, textarea, select { font-family: inherit; }
   display: flex;
   flex-direction: column;
   padding: 24px 0;
+  overflow-y: auto;
 }
 .sidebar-brand {
   display: flex;
@@ -164,7 +165,7 @@ input, textarea, select { font-family: inherit; }
 }
 .sidebar-logout:hover { background: rgba(255,255,255,0.14); color: #fff; }
 
-.admin-main { flex: 1; padding: 32px 40px; max-width: 100%; overflow-x: hidden; }
+.admin-main { flex: 1; padding: 32px 40px; max-width: 100%; overflow-y: auto; overflow-x: hidden; }
 
 .view-header { margin-bottom: 28px; position: relative; }
 .view-header h1 { font-size: 1.6rem; color: var(--text-dark); margin-bottom: 4px; }
