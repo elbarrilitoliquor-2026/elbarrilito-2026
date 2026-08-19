@@ -158,53 +158,171 @@ export default function OfflineBillingView() {
     const html = `
       <html>
         <head>
-          <title>Invoice</title>
+          <title>Invoice - El Barrilito</title>
           <style>
-            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: 0 auto; }
-            h1 { color: #800000; text-align: center; margin-bottom: 5px; }
-            .header-info { text-align: center; margin-bottom: 30px; color: #666; font-size: 0.9em; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            th { background: #f9f9f9; padding: 10px 8px; text-align: left; border-bottom: 2px solid #ddd; }
-            .total-row { font-weight: bold; font-size: 1.2em; }
-            .customer-details { margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 5px; }
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+            @page { margin: 0; }
+            body { 
+              font-family: 'Inter', sans-serif; 
+              color: #111; 
+              background: #f7f7f7; 
+              margin: 0; 
+              padding: 40px; 
+            }
+            .invoice-container {
+              max-width: 600px;
+              margin: 0 auto;
+              background: #fff;
+              padding: 40px;
+              box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+              border-radius: 8px;
+            }
+            .invoice-header {
+              text-align: center;
+              margin-bottom: 30px;
+              border-bottom: 2px dashed #eee;
+              padding-bottom: 25px;
+            }
+            .logo {
+              width: 60px;
+              height: 60px;
+              margin-bottom: 10px;
+            }
+            .store-name { 
+              color: #A80000; 
+              font-size: 24px; 
+              font-weight: 700; 
+              margin: 0 0 5px 0; 
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            }
+            .header-info { 
+              color: #555; 
+              font-size: 0.9em; 
+              line-height: 1.5;
+            }
+            .invoice-meta {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 30px;
+              font-size: 0.95em;
+              color: #444;
+            }
+            .meta-block strong { color: #222; }
+            table { 
+              width: 100%; 
+              border-collapse: collapse; 
+              margin-bottom: 30px; 
+            }
+            th { 
+              background: #fdfdfd; 
+              padding: 12px 10px; 
+              text-align: left; 
+              border-top: 1px solid #eee;
+              border-bottom: 2px solid #ddd; 
+              color: #444;
+              font-weight: 600;
+              font-size: 0.9em;
+              text-transform: uppercase;
+            }
+            td {
+              padding: 12px 10px;
+              border-bottom: 1px solid #eee;
+              font-size: 0.95em;
+              color: #222;
+            }
+            .qty-col { text-align: center; width: 60px; }
+            .price-col { text-align: right; width: 100px; font-weight: 600; }
+            .total-section {
+              display: flex;
+              justify-content: flex-end;
+              margin-bottom: 40px;
+            }
+            .total-box {
+              background: #fafafa;
+              padding: 20px;
+              border-radius: 6px;
+              border: 1px solid #eee;
+              width: 250px;
+            }
+            .total-row { 
+              display: flex;
+              justify-content: space-between;
+              font-weight: 700; 
+              font-size: 1.3em;
+              color: #A80000;
+            }
+            .footer {
+              text-align: center; 
+              color: #888; 
+              font-size: 0.9em;
+              border-top: 2px dashed #eee;
+              padding-top: 20px;
+            }
+            /* Print Specific Styles */
+            @media print {
+              body { background: #fff; padding: 0; }
+              .invoice-container { box-shadow: none; border-radius: 0; padding: 20px; }
+            }
           </style>
         </head>
         <body>
-          <h1>El Barrilito Liquor Store</h1>
-          <div class="header-info">
-            ${settings?.address || ''}<br/>
-            ${settings?.phone || ''}
-          </div>
-          
-          <div class="customer-details">
-            <strong>Customer:</strong> ${lastSale.customerName || 'Walk-in'} <br/>
-            <strong>Phone:</strong> ${lastSale.customerPhone || 'N/A'} <br/>
-            <strong>Date:</strong> ${new Date().toLocaleString()}
-          </div>
+          <div class="invoice-container">
+            <div class="invoice-header">
+              <img class="logo" src="${window.location.origin}/assets/images/eb-barrel-logo.svg" alt="El Barrilito Logo" />
+              <h1 class="store-name">El Barrilito Liquor Store</h1>
+              <div class="header-info">
+                ${settings?.address || '3370 Shaver St, Pasadena, TX 77504'}<br/>
+                ${settings?.phone || '+1 (713) 360-6526'}
+              </div>
+            </div>
+            
+            <div class="invoice-meta">
+              <div class="meta-block">
+                <div><strong>Customer:</strong> ${lastSale.customerName || 'Walk-in'}</div>
+                <div><strong>Phone:</strong> ${lastSale.customerPhone || 'N/A'}</div>
+              </div>
+              <div class="meta-block" style="text-align: right;">
+                <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+                <div><strong>Time:</strong> ${new Date().toLocaleTimeString()}</div>
+              </div>
+            </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th style="text-align: center;">Qty</th>
-                <th style="text-align: right;">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${orderLines}
-            </tbody>
-            <tfoot>
-              <tr class="total-row">
-                <td colspan="2" style="padding: 15px 8px; text-align: right;">Total Paid:</td>
-                <td style="padding: 15px 8px; text-align: right; color: #800000;">$${lastSale.totalAmount.toFixed(2)}</td>
-              </tr>
-            </tfoot>
-          </table>
-          <div style="text-align: center; margin-top: 40px; color: #666; font-size: 0.9em;">
-            Thank you for shopping with us!
+            <table>
+              <thead>
+                <tr>
+                  <th>Item Description</th>
+                  <th class="qty-col">Qty</th>
+                  <th class="price-col">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${orderLines}
+              </tbody>
+            </table>
+            
+            <div class="total-section">
+              <div class="total-box">
+                <div class="total-row">
+                  <span>Total Paid:</span>
+                  <span>$${lastSale.totalAmount.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="footer">
+              Thank you for shopping with El Barrilito!<br/>
+              Please retain this receipt for your records.
+            </div>
           </div>
           <script>
-            window.onload = function() { window.print(); window.close(); }
+            // Slight delay to allow font and logo to load before printing
+            window.onload = function() { 
+              setTimeout(function() {
+                window.print();
+                window.close();
+              }, 250);
+            }
           </script>
         </body>
       </html>
