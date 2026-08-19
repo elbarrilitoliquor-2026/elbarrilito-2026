@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import DashboardView from './DashboardView';
 import CatalogueView from './CatalogueView';
 import LeadsView from './LeadsView';
+import SubscribersView from './SubscribersView';
 import ReviewsView from './ReviewsView';
 import SettingsView from './SettingsView';
 import BannersView from './BannersView';
@@ -35,7 +36,10 @@ export default function AdminApp() {
           />
         )}
         {activeView === 'catalogue' && <CatalogueView onDataChanged={refreshDashboard} />}
-        {activeView === 'leads' && <LeadsView />}
+        {activeView === 'leads' && (
+          <LeadsView onProductClick={(p) => console.log('Lead clicked product:', p)} />
+        )}
+        {activeView === 'subscribers' && <SubscribersView />}
         {activeView === 'reviews' && (
           <ReviewsView
             onDataChanged={refreshDashboard}

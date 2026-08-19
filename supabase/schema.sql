@@ -400,3 +400,24 @@ create policy "public read images"
   to anon, authenticated
   using (bucket_id = 'product-images');
 
+
+-- ==========================================
+-- 8. NEWSLETTER SUBSCRIBERS
+-- ==========================================
+create table public.newsletter_subscribers (
+  id uuid default gen_random_uuid() primary key,
+  email text not null unique,
+  created_at timestamptz not null default now()
+);
+
+alter table public.newsletter_subscribers enable row level security;
+
+create policy "Allow anonymous inserts for newsletter subscribers"
+  on public.newsletter_subscribers
+  for insert
+  with check (true);
+
+create policy "Allow authenticated selects for newsletter subscribers"
+  on public.newsletter_subscribers
+  for select
+  using (auth.role() = 'authenticated');

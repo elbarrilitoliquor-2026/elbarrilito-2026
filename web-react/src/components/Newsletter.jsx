@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabaseClient } from '../lib/supabaseClient';
 
 /* Ports script.js `initNewsletterForm()` — purely cosmetic client-side
    confirmation (no backend table for newsletter signups in the schema),
@@ -7,8 +8,19 @@ export default function Newsletter() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    if (!email) return;
+
+    try {
+      await supabaseClient
+        .from('newsletter_subscribers')
+        .insert({ email });
+    } catch (err) {
+      console.error('Newsletter subscription error:', err);
+      // Fail silently for user experience, but it's logged
+    }
+
     setSubscribed(true);
     setTimeout(() => {
       setSubscribed(false);
