@@ -52,7 +52,6 @@ export default function CartDrawer() {
                  .replace(/{Address}/g, addr)
                  .replace(/{OrderLines}/g, orderLines)
                  .replace(/{Subtotal}/g, subtotal.toFixed(2))
-                 .replace(/{Tax}/g, tax.toFixed(2))
                  .replace(/{TotalBilling}/g, total.toFixed(2));
 
     const phoneNum = settings.whatsapp_number || '18327367123';
@@ -123,10 +122,6 @@ export default function CartDrawer() {
             <div className="cart-total-row">
               <span>Subtotal</span>
               <span className="cart-total-price" id="cart-total-price">${subtotal.toFixed(2)}</span>
-            </div>
-            <div className="cart-total-row cart-tax-row">
-              <span>Estimated TX Tax (8.25%)</span>
-              <span id="cart-tax-price">${tax.toFixed(2)}</span>
             </div>
             <div className="cart-total-row cart-grand-total">
               <span>Total Billing</span>

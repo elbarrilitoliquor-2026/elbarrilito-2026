@@ -96,8 +96,8 @@ export function CartProvider({ children }) {
 
   const totalQty = useMemo(() => cart.reduce((sum, i) => sum + i.qty, 0), [cart]);
   const subtotal = useMemo(() => cart.reduce((sum, i) => sum + i.price * i.qty, 0), [cart]);
-  const tax = useMemo(() => subtotal * TAX_RATE, [subtotal]);
-  const total = useMemo(() => subtotal + tax, [subtotal, tax]);
+  const tax = 0;
+  const total = subtotal;
 
   const getQtyByName = useCallback((name) => cart.find((i) => i.name === name)?.qty || 0, [cart]);
 
