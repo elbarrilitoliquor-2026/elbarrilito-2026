@@ -12,6 +12,7 @@ import GalleryRow from './components/GalleryRow';
 import Tasting from './components/Tasting';
 import MarqueeStrip from './components/MarqueeStrip';
 import PromoBanner from './components/PromoBanner';
+import BulkPromoBanner from './components/BulkPromoBanner';
 import Shop from './components/Shop';
 import WhyChooseUs from './components/WhyChooseUs';
 import About from './components/About';
@@ -58,6 +59,7 @@ function AppContent() {
         <Tasting />
         <MarqueeStrip />
         <PromoBanner />
+        <BulkPromoBanner />
         <Shop products={products} loading={productsLoading} />
         <WhyChooseUs />
         <About />

@@ -103,8 +103,8 @@ export default function Hero() {
       <div className="hero-container">
         <div className="hero-content" id="hero-content">
           <h1 className="hero-title" ref={titleRef}>
-            The Best<br />
-            <em>Liquor Shop in Texas</em>
+            Texas&apos; Premier<br />
+            <em>Spirit Destination</em>
           </h1>
 
           <p className="hero-desc" ref={descRef}>
