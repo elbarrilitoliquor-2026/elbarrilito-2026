@@ -11,6 +11,8 @@ export const DEFAULT_STORE_SETTINGS = {
   hours: 'Mon–Sat: 10 AM – 9 PM · Sunday: Closed',
   msg_tpl_order: '*NEW ORDER — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n📍 *Order Type:* {OrderType}\n📌 *Address/Note:* {Address}\n━━━━━━━━━━━━━━━━━━━━━━\n*ORDER ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*Subtotal:* ${Subtotal}\n*TX Tax (8.25%):* ${Tax}\n*TOTAL BILLING:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nHello! Please confirm my order availability and pickup/delivery time. Thank you!',
   msg_tpl_enquiry: 'Hello, I am interested in {ProductName}. Can you provide more details?',
+  bulk_discount_qty: 12,
+  bulk_discount_percent: 15.00,
 };
 
 export function useStoreSettings() {
@@ -45,6 +47,8 @@ export function useStoreSettings() {
             hours: data.hours || DEFAULT_STORE_SETTINGS.hours,
             msg_tpl_order: data.msg_tpl_order || DEFAULT_STORE_SETTINGS.msg_tpl_order,
             msg_tpl_enquiry: data.msg_tpl_enquiry || DEFAULT_STORE_SETTINGS.msg_tpl_enquiry,
+            bulk_discount_qty: data.bulk_discount_qty ?? DEFAULT_STORE_SETTINGS.bulk_discount_qty,
+            bulk_discount_percent: data.bulk_discount_percent ?? DEFAULT_STORE_SETTINGS.bulk_discount_percent,
           });
         }
       } catch (err) {

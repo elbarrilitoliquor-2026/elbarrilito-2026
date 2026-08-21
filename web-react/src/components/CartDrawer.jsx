@@ -16,6 +16,13 @@ export default function CartDrawer() {
   const [custAddr, setCustAddr] = useState('');
   const nameInputRef = useRef(null);
 
+  const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+  const discountThreshold = settings.bulk_discount_qty ?? 12;
+  const discountPercent = settings.bulk_discount_percent ?? 15;
+  const isDiscountApplied = totalQty >= discountThreshold && discountThreshold > 0;
+  const discountAmt = isDiscountApplied ? subtotal * (discountPercent / 100) : 0;
+  const finalTotal = subtotal + tax - discountAmt;
+
   useEffect(() => {
     function onKeydown(e) {
       if (e.key === 'Escape' && isOpen) closeDrawer();
@@ -45,6 +52,8 @@ export default function CartDrawer() {
     }
 
     const orderLines = cart.map((i) => `• ${i.qty}x ${i.name} — $${(i.price * i.qty).toFixed(2)}`).join('\n');
+    const discountLineStr = isDiscountApplied ? `\n*Discount (${discountPercent}% Off):* -$${discountAmt.toFixed(2)}` : '';
+
     let waMsg = settings.msg_tpl_order || '';
     let discountMsg = bulkDiscount > 0 ? `\nBulk Discount (15%): -$${bulkDiscount.toFixed(2)}` : '';
     waMsg = waMsg.replace(/{CustomerName}/g, name)
@@ -52,8 +61,10 @@ export default function CartDrawer() {
                  .replace(/{OrderType}/g, orderType)
                  .replace(/{Address}/g, addr)
                  .replace(/{OrderLines}/g, orderLines)
-                 .replace(/{Subtotal}/g, subtotal.toFixed(2) + discountMsg)
-                 .replace(/{TotalBilling}/g, total.toFixed(2));
+                 .replace(/{Subtotal}/g, subtotal.toFixed(2))
+                 .replace(/{Tax}/g, tax.toFixed(2))
+                 .replace(/{DiscountLine}/g, discountLineStr)
+                 .replace(/{TotalBilling}/g, finalTotal.toFixed(2));
 
     const phoneNum = settings.whatsapp_number || '18327367123';
     const waUrl = `https://wa.me/${phoneNum}?text=${encodeURIComponent(waMsg)}`;
@@ -124,15 +135,15 @@ export default function CartDrawer() {
               <span>Subtotal</span>
               <span className="cart-total-price" id="cart-total-price">${subtotal.toFixed(2)}</span>
             </div>
-            {bulkDiscount > 0 && (
-              <div className="cart-total-row" style={{ color: '#2f8f3e', fontWeight: 'bold' }}>
-                <span>Bulk Discount (15% Off)</span>
-                <span>-${bulkDiscount.toFixed(2)}</span>
+            {isDiscountApplied && (
+              <div className="cart-total-row" style={{ color: '#00a34b' }}>
+                <span>Bulk Discount ({discountPercent}% Off)</span>
+                <span>-${discountAmt.toFixed(2)}</span>
               </div>
             )}
             <div className="cart-total-row cart-grand-total">
               <span>Total Billing</span>
-              <span id="cart-total-billing">${total.toFixed(2)}</span>
+              <span id="cart-total-billing">${finalTotal.toFixed(2)}</span>
             </div>
           </div>
 

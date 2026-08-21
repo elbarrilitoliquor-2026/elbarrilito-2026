@@ -252,6 +252,8 @@ create table if not exists public.store_settings (
   msg_tpl_order text,
   msg_tpl_enquiry text,
   msg_tpl_offline_bill text,
+  bulk_discount_qty integer not null default 12,
+  bulk_discount_percent numeric(5,2) not null default 15.00,
   updated_at timestamptz not null default now()
 );
 
@@ -270,7 +272,7 @@ create policy "admin full access store settings"
   using (true)
   with check (true);
 
-insert into public.store_settings (id, address, google_maps_url, phone, whatsapp_number, whatsapp_display, email, hours, msg_tpl_order, msg_tpl_enquiry, msg_tpl_offline_bill)
+insert into public.store_settings (id, address, google_maps_url, phone, whatsapp_number, whatsapp_display, email, hours, msg_tpl_order, msg_tpl_enquiry, msg_tpl_offline_bill, bulk_discount_qty, bulk_discount_percent)
 values (
   'default',
   '3370 Shaver St, Pasadena, TX 77504',
@@ -280,9 +282,11 @@ values (
   '+1 (832) 736-7123',
   'info@elbarrilito.com',
   'Mon–Sat: 10 AM – 9 PM · Sunday: Closed',
-  '*NEW ORDER — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n📍 *Order Type:* {OrderType}\n📌 *Address/Note:* {Address}\n━━━━━━━━━━━━━━━━━━━━━━\n*ORDER ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*Subtotal:* ${Subtotal}\n*TX Tax (8.25%):* ${Tax}\n*TOTAL BILLING:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nHello! Please confirm my order availability and pickup/delivery time. Thank you!',
+  '*NEW ORDER — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n📍 *Order Type:* {OrderType}\n📌 *Address/Note:* {Address}\n━━━━━━━━━━━━━━━━━━━━━━\n*ORDER ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*Subtotal:* ${Subtotal}\n*TX Tax (8.25%):* ${Tax}{DiscountLine}\n*TOTAL BILLING:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nHello! Please confirm my order availability and pickup/delivery time. Thank you!',
   'Hello, I am interested in {ProductName}. Can you provide more details?',
-  '*INVOICE — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n━━━━━━━━━━━━━━━━━━━━━━\n*ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*TOTAL PAID:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nThank you for your purchase! We hope to see you again soon.'
+  '*INVOICE — El Barrilito Liquor Store* 🥃\n━━━━━━━━━━━━━━━━━━━━━━\n👤 *Customer:* {CustomerName}\n📞 *Phone:* {CustomerPhone}\n━━━━━━━━━━━━━━━━━━━━━━\n*ITEMS:*\n{OrderLines}\n━━━━━━━━━━━━━━━━━━━━━━\n*TOTAL PAID:* ${TotalBilling}\n━━━━━━━━━━━━━━━━━━━━━━\nThank you for your purchase! We hope to see you again soon.',
+  12,
+  15.00
 )
 on conflict (id) do nothing;
 
