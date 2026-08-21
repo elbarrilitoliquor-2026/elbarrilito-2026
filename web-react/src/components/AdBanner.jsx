@@ -4,6 +4,16 @@ import { supabaseClient } from '../lib/supabaseClient';
 /* â”€â”€â”€ Fallback data (used when DB is empty or unavailable) â”€â”€â”€ */
 const FALLBACK_CARDS = [
   {
+    id: 'f-bulk',
+    card_style: 'burgundy',
+    badge: '15% OFF BULK',
+    badge_style: 'gold',
+    title: 'Throwing a Party?',
+    subtitle: '15% OFF on all bulk orders of 12 bottles or more. Mix and match premium spirits & wines.',
+    cta_label: 'CLAIM DISCOUNT →',
+    image_url: null,
+  },
+  {
     id: 'f-tequila',
     card_style: 'burgundy',
     badge: 'NEW LAUNCH',
