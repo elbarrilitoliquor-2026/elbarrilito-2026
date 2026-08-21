@@ -8,7 +8,7 @@ import WhatsAppIcon from './WhatsAppIcon';
    and billing form validation exactly (name/phone required, tax 8.25%,
    same message template/emoji/line separators). */
 export default function CartDrawer() {
-  const { cart, isOpen, closeDrawer, incByIndex, decByIndex, removeByIndex, subtotal, tax, total } = useCart();
+  const { cart, isOpen, closeDrawer, incByIndex, decByIndex, removeByIndex, subtotal, bulkDiscount, tax, total } = useCart();
   const { settings } = useStoreSettings();
   const [custName, setCustName] = useState('');
   const [custPhone, setCustPhone] = useState('');
@@ -46,12 +46,13 @@ export default function CartDrawer() {
 
     const orderLines = cart.map((i) => `• ${i.qty}x ${i.name} — $${(i.price * i.qty).toFixed(2)}`).join('\n');
     let waMsg = settings.msg_tpl_order || '';
+    let discountMsg = bulkDiscount > 0 ? `\nBulk Discount (15%): -$${bulkDiscount.toFixed(2)}` : '';
     waMsg = waMsg.replace(/{CustomerName}/g, name)
                  .replace(/{CustomerPhone}/g, phone)
                  .replace(/{OrderType}/g, orderType)
                  .replace(/{Address}/g, addr)
                  .replace(/{OrderLines}/g, orderLines)
-                 .replace(/{Subtotal}/g, subtotal.toFixed(2))
+                 .replace(/{Subtotal}/g, subtotal.toFixed(2) + discountMsg)
                  .replace(/{TotalBilling}/g, total.toFixed(2));
 
     const phoneNum = settings.whatsapp_number || '18327367123';
@@ -123,6 +124,12 @@ export default function CartDrawer() {
               <span>Subtotal</span>
               <span className="cart-total-price" id="cart-total-price">${subtotal.toFixed(2)}</span>
             </div>
+            {bulkDiscount > 0 && (
+              <div className="cart-total-row" style={{ color: '#2f8f3e', fontWeight: 'bold' }}>
+                <span>Bulk Discount (15% Off)</span>
+                <span>-${bulkDiscount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="cart-total-row cart-grand-total">
               <span>Total Billing</span>
               <span id="cart-total-billing">${total.toFixed(2)}</span>

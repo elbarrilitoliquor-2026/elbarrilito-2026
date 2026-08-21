@@ -97,7 +97,8 @@ export function CartProvider({ children }) {
   const totalQty = useMemo(() => cart.reduce((sum, i) => sum + i.qty, 0), [cart]);
   const subtotal = useMemo(() => cart.reduce((sum, i) => sum + i.price * i.qty, 0), [cart]);
   const tax = 0;
-  const total = subtotal;
+  const bulkDiscount = totalQty >= 12 ? subtotal * 0.15 : 0;
+  const total = subtotal - bulkDiscount;
 
   const getQtyByName = useCallback((name) => cart.find((i) => i.name === name)?.qty || 0, [cart]);
 
@@ -116,12 +117,13 @@ export function CartProvider({ children }) {
       clearCart,
       totalQty,
       subtotal,
+      bulkDiscount,
       tax,
       total,
       getQtyByName,
       TAX_RATE,
     }),
-    [cart, isOpen, openDrawer, closeDrawer, addItem, incByName, decByName, incByIndex, decByIndex, removeByIndex, clearCart, totalQty, subtotal, tax, total, getQtyByName]
+    [cart, isOpen, openDrawer, closeDrawer, addItem, incByName, decByName, incByIndex, decByIndex, removeByIndex, clearCart, totalQty, subtotal, bulkDiscount, tax, total, getQtyByName]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
