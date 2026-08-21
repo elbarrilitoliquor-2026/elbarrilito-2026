@@ -1097,7 +1097,7 @@ main {
   justify-content: space-between;
   width: 100%;
   flex: 0 0 100%;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   min-height: 200px;
   height: auto;
   border-radius: 20px;
@@ -1135,25 +1135,13 @@ main {
   box-shadow: 0 20px 42px rgba(0, 0, 0, 0.28);
 }
 
-/* Card Theme Gradients - Minimal Corporate Premium */
-.ad-card-burgundy {
-  background: linear-gradient(135deg, #111111 0%, #1a1a1a 60%, #222222 100%);
-  color: #fff;
-}
-.ad-card-amber {
-  background: linear-gradient(135deg, #181614 0%, #231f1c 60%, #2e2925 100%);
-  color: #fff;
-}
-.ad-card-emerald {
-  background: linear-gradient(135deg, #121614 0%, #191f1b 60%, #222a24 100%);
-  color: #fff;
-}
-.ad-card-slate {
-  background: linear-gradient(135deg, #141618 0%, #1a1e22 60%, #23282d 100%);
-  color: #fff;
-}
+/* Card Theme Gradients - Cinematic Red (Based on website theme) */
+.ad-card-burgundy,
+.ad-card-amber,
+.ad-card-emerald,
+.ad-card-slate,
 .ad-card-sunset {
-  background: linear-gradient(135deg, #1a1515 0%, #241c1c 60%, #2e2222 100%);
+  background: linear-gradient(135deg, var(--burgundy-dark) 0%, var(--burgundy) 100%);
   color: #fff;
 }
 
@@ -1189,7 +1177,7 @@ main {
 }
 
 .ad-card-title {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: clamp(1rem, 2vw, 1.25rem);
   font-weight: 500;
   line-height: 1.3;
@@ -1278,16 +1266,17 @@ main {
     padding: 10px 0; /* Move padding to track to prevent shadow clipping */
   }
   .ad-banner-track {
-    padding: 20px 20px 50px 20px; /* Horizontal padding here keeps shadows inside scroll bounds */
-    gap: 30px; 
+    padding: 20px 5% 50px 5%; /* Horizontal padding here keeps shadows inside scroll bounds */
+    gap: 16px; 
   }
   .ad-card {
     width: 100%;
-    flex: 0 0 100%; 
+    flex: 0 0 90%; 
     min-height: 180px; /* Made the rectangle much bigger vertically */
     height: auto;
     padding: 22px 20px 22px 28px;
     border-radius: 20px;
+    margin: 0 auto;
   }
   .ad-card-img-wrap {
     width: 110px;
